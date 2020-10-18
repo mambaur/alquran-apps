@@ -9,14 +9,170 @@
         android:layout_marginLeft="10dp"
         android:layout_marginRight="3dp"
         app:cardCornerRadius="15dp"
-        android:elevation="1dp"
+        android:elevation="9dp"
         android:layout_marginVertical="5dp">
-        <TextView
-            android:id="@+id/txtName"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_gravity="center"
-            android:gravity="center"
-            android:text="Hello world!"/>
+
+        <androidx.constraintlayout.widget.ConstraintLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent">
+
+            <TextView
+                android:id="@+id/txtNameHeader"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center"
+                android:gravity="center"
+                android:textStyle="bold"
+                android:layout_margin="15dp"
+                android:textColor="@color/colorWhite"
+                android:paddingHorizontal="15dp"
+                android:paddingVertical="5dp"
+                android:background="@drawable/bg_header_waktu_sholat"
+                android:text="Hari Senin!"
+                app:layout_constraintTop_toTopOf="parent"
+                app:layout_constraintLeft_toLeftOf="parent"/>
+
+            <RelativeLayout
+                android:layout_width="30dp"
+                android:layout_height="30dp"
+                android:layout_margin="15dp"
+                android:gravity="center"
+                android:padding="5dp"
+                android:background="@drawable/bg_waktu_sholat_circle"
+                app:layout_constraintTop_toTopOf="parent"
+                app:layout_constraintRight_toRightOf="parent">
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:textSize="7dp"
+                    android:text="17/08"/>
+
+            </RelativeLayout>
+
+            <LinearLayout
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal"
+                android:layout_marginBottom="10dp"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintStart_toStartOf="parent">
+                <LinearLayout
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:orientation="vertical"
+                    android:layout_marginRight="5dp"
+                    android:gravity="center_horizontal">
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="Subuh"
+                        android:textSize="9dp"/>
+
+                    <TextView
+                        android:id="@+id/txtSubuh"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="04:00"
+                        android:paddingVertical="2dp"
+                        android:paddingHorizontal="7dp"
+                        android:background="@drawable/bg_waktu_sholat"
+                        android:textSize="9dp"/>
+
+                </LinearLayout>
+                <LinearLayout
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:orientation="vertical"
+                    android:layout_marginRight="5dp"
+                    android:gravity="center_horizontal">
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="Dzuhur"
+                        android:textSize="9dp"/>
+
+                    <TextView
+                        android:id="@+id/txtDzuhur"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="04:00"
+                        android:paddingVertical="2dp"
+                        android:paddingHorizontal="7dp"
+                        android:background="@drawable/bg_waktu_sholat"
+                        android:textSize="9dp"/>
+
+                </LinearLayout>
+                <LinearLayout
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:orientation="vertical"
+                    android:layout_marginRight="5dp"
+                    android:gravity="center_horizontal">
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="Ashr"
+                        android:textSize="9dp"/>
+
+                    <TextView
+                        android:id="@+id/txtAshr"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="04:00"
+                        android:paddingVertical="2dp"
+                        android:paddingHorizontal="7dp"
+                        android:background="@drawable/bg_waktu_sholat"
+                        android:textSize="9dp"/>
+
+                </LinearLayout>
+                <LinearLayout
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:orientation="vertical"
+                    android:layout_marginRight="5dp"
+                    android:gravity="center_horizontal">
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="Magrib"
+                        android:textSize="9dp"/>
+
+                    <TextView
+                        android:id="@+id/txtMagrib"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="04:00"
+                        android:paddingVertical="2dp"
+                        android:paddingHorizontal="7dp"
+                        android:background="@drawable/bg_waktu_sholat"
+                        android:textSize="9dp"/>
+
+                </LinearLayout>
+                <LinearLayout
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:orientation="vertical"
+                    android:layout_marginRight="5dp"
+                    android:gravity="center_horizontal">
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="Isya"
+                        android:textSize="9dp"/>
+
+                    <TextView
+                        android:id="@+id/txtIsya"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="04:00"
+                        android:paddingVertical="2dp"
+                        android:paddingHorizontal="7dp"
+                        android:background="@drawable/bg_waktu_sholat"
+                        android:textSize="9dp"/>
+
+                </LinearLayout>
+            </LinearLayout>
+        </androidx.constraintlayout.widget.ConstraintLayout>
     </androidx.cardview.widget.CardView>
 </LinearLayout>

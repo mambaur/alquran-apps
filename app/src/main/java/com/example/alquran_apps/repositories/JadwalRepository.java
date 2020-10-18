@@ -2,13 +2,11 @@ package com.example.alquran_apps.repositories;
 
 import android.content.Context;
 import android.util.Log;
-import android.widget.Toast;
 
 import com.android.volley.Request;
 import com.android.volley.RequestQueue;
 import com.android.volley.Response;
 import com.android.volley.VolleyError;
-import com.android.volley.toolbox.JsonObjectRequest;
 import com.android.volley.toolbox.StringRequest;
 import com.android.volley.toolbox.Volley;
 import com.example.alquran_apps.models.JadwalModel;
@@ -17,28 +15,36 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import java.util.ArrayList;
 import java.util.List;
 
 public class JadwalRepository {
-    public static List<JadwalModel> getJadwalToday(Context context){
-        String url = "https://raw.githubusercontent.com/lakuapik/jadwalsholatorg/master/adzan/semarang/2020/10.json";
-        List<JadwalModel> jadwal = null;
+    public static String baseURL = "https://raw.githubusercontent.com/lakuapik/jadwalsholatorg/master/adzan/";
+    public static String getURL = "semarang/2020/10.json";
+    RequestQueue requestQueue;
+    List<JadwalModel> listJadwal;
 
-        // Instantiate the RequestQueue.
-        RequestQueue queue = Volley.newRequestQueue(context);
+    public JadwalRepository(Context context) {
+        this.requestQueue = Volley.newRequestQueue(context);
+        this.listJadwal = new ArrayList<JadwalModel>();
+    }
 
-        // Request a string response from the provided URL.
-        StringRequest stringRequest = new StringRequest(Request.Method.GET, url,
+    public List<JadwalModel> getJadwalToday(){
+        StringRequest stringRequest = new StringRequest(Request.Method.GET, baseURL + getURL,
                 new Response.Listener<String>() {
                     @Override
                     public void onResponse(String response) {
-                        // Display the first 500 characters of the response string.
-                        JSONObject obj = null;
+                        JadwalModel jadwalModel = new JadwalModel();
                         try {
-                            obj = new JSONObject(response);
-                            JSONArray result = obj.getJSONArray(response);
-                            System.out.println("Ini adalah obj = "+result.getJSONArray(1));
-//                            JSONArray playerArray = obj.getJSONArray("result");
+                            JSONArray jsonArray = new JSONArray(response);
+                            for (int i=0; i<jsonArray.length(); i++){
+
+                                JSONObject jsonObject = jsonArray.getJSONObject(i);
+                                System.out.println("ini hasil "+ jsonObject.getString("ashr"));
+                                jadwalModel.setAshr(jsonObject.getString("ashr"));
+                                System.out.println("ini adalah list jadwal model "+jadwalModel.getAshr());
+                                listJadwal.add(jadwalModel);
+                            }
                         } catch (JSONException e) {
                             e.printStackTrace();
                         }
@@ -46,14 +52,14 @@ public class JadwalRepository {
                 }, new Response.ErrorListener() {
             @Override
             public void onErrorResponse(VolleyError error) {
-                Log.d("get Jadwal", error.toString());
+                Log.d("Get Jadwal Error : ", error.toString());
             }
         });
+        requestQueue.add(stringRequest);
+        return listJadwal;
+    }
 
-        // Add the request to the RequestQueue.
-        queue.add(stringRequest);
-
-
-        return jadwal;
+    public String tes(){
+        return "Percobaan berhasil";
     }
 }

@@ -3,18 +3,6 @@ package com.example.alquran_apps.models;
 public class JadwalModel {
     private String tanggal, imsyak, shubuh, terbit, dhuha, dzuhur, ashr, magrib, isya;
 
-    public JadwalModel(String tanggal, String imsyak, String shubuh, String terbit, String dhuha, String dzuhur, String ashr, String magrib, String isya) {
-        this.tanggal = tanggal;
-        this.imsyak = imsyak;
-        this.shubuh = shubuh;
-        this.terbit = terbit;
-        this.dhuha = dhuha;
-        this.dzuhur = dzuhur;
-        this.ashr = ashr;
-        this.magrib = magrib;
-        this.isya = isya;
-    }
-
     public String getTanggal() {
         return tanggal;
     }
