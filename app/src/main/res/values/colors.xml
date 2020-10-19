@@ -16,6 +16,7 @@
     <color name="colorGreen1">#c5e8b7</color>
     <color name="colorLightGrey">#D6D6D6</color>
     <color name="colorLightGrey2">#ECEBEB</color>
+    <color name="colorLightGrey3">#F1F1F1</color>
     <color name="colorGrey">#8A8A8A</color>
     <color name="colorPrimaryGrey">#656565</color>
 </resources>

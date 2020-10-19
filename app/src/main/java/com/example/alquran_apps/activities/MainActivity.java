@@ -2,6 +2,7 @@ package com.example.alquran_apps.activities;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.core.widget.NestedScrollView;
 import androidx.drawerlayout.widget.DrawerLayout;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
@@ -19,7 +20,7 @@ import android.widget.AutoCompleteTextView;
 import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.PopupMenu;
-import android.widget.TextView;
+import android.widget.ProgressBar;
 import android.widget.Toast;
 
 import com.android.volley.Request;
@@ -51,16 +52,20 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     private List<SuratModel> listSurat;
     private RecyclerView recyclerViewJadwal, recyclerViewSurat;
     private RecyclerView.Adapter adapterJadwal, adapterSurat;
-    private RecyclerView.LayoutManager layoutManagerJadwal, layoutManagerSurat;
+    private LinearLayoutManager layoutManagerJadwal, layoutManagerSurat;
     private SuratModel suratModel;
     private JadwalModel jadwalModel;
+    private Boolean isScrolling = true;
+    private int currentItems, totalItems, scrollOutItems;
+    private int loadData = 0;
 
     // Interface
-    TextView suratTotal;
     ImageButton btnMenu;
     ImageView drawMenu;
     DrawerLayout drawer;
     NavigationView nav;
+    ProgressBar progressBar;
+    NestedScrollView nestedScrollView;
 
     // AutoCompleteTextView
     AutoCompleteTextView ACtv;
@@ -72,17 +77,20 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         setContentView(R.layout.activity_main);
 
         // Initialize Interface
-        suratTotal = findViewById(R.id.suratTotal);
         recyclerViewSurat = findViewById(R.id.listSurat);
         recyclerViewJadwal = findViewById(R.id.listSholat);
+        nestedScrollView = findViewById(R.id.nestedScroll);
         btnMenu = findViewById(R.id.btnMenu);
+        progressBar = findViewById(R.id.pgBar);
         drawMenu = findViewById(R.id.menu_icon);
         ACtv = findViewById(R.id.ACtv);
         drawer = findViewById(R.id.drawer_layout);
         nav = findViewById(R.id.nav_view);
 
-        sholat = new ArrayList<>();
         listSurat = new ArrayList<>();
+
+        getJadwal();
+        getSurat();
 
         // AutoCompleteTextView
         ArrayAdapter<String> ACadapter = new ArrayAdapter<>(this, android.R.layout.simple_dropdown_item_1line, COUNTRIES);
@@ -105,13 +113,34 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         nav.setNavigationItemSelectedListener(this);
 
         btnMenu.setOnClickListener(this);
+
+        nestedScrollView.setOnScrollChangeListener(new NestedScrollView.OnScrollChangeListener() {
+            @Override
+            public void onScrollChange(NestedScrollView v, int scrollX, int scrollY, int oldScrollX, int oldScrollY) {
+                if (v.getChildAt(v.getChildCount()-1) != null){
+                    if ((scrollY >= (v.getChildAt(v.getChildCount() - 1).getMeasuredHeight() - v.getMeasuredHeight()))
+                            && scrollY > oldScrollY){
+                        currentItems = layoutManagerSurat.getChildCount();
+                        totalItems = layoutManagerSurat.getItemCount();
+                        scrollOutItems = layoutManagerSurat.findFirstVisibleItemPosition();
+                        if (isScrolling && (currentItems + scrollOutItems) >= totalItems){
+                            isScrolling = false;
+                            progressBar.setVisibility(View.VISIBLE);
+                            getSurat();
+                            progressBar.setVisibility(View.GONE);
+                            isScrolling = true;
+                        }
+                    }
+                }
+            }
+        });
     }
 
     @Override
     protected void onResume() {
         super.onResume();
-        getJadwal();
-        getSurat();
+//        getJadwal();
+//        getSurat();
     }
 
     void getJadwal(){
@@ -122,6 +151,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                     public void onResponse(String response) {
                         try {
                             JSONArray jsonArray = new JSONArray(response);
+                            sholat = new ArrayList<>();
                             for (int i=0; i<jsonArray.length(); i++){
                                 jadwalModel = new JadwalModel();
                                 JSONObject jsonObject = jsonArray.getJSONObject(i);
@@ -161,24 +191,32 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                     public void onResponse(String response) {
                         try {
                             JSONArray jsonArray = new JSONArray(response);
-                            for (int i=0; i<jsonArray.length(); i++){
-                                suratModel = new SuratModel();
-                                JSONObject jsonObject = jsonArray.getJSONObject(i);
-                                suratModel.setNama(jsonObject.getString("nama"));
-                                suratModel.setAsma(jsonObject.getString("asma"));
-                                suratModel.setArti(jsonObject.getString("arti"));
-                                suratModel.setNomor(jsonObject.getString("nomor"));
-                                listSurat.add(suratModel);
+
+                            if (jsonArray.length() >= listSurat.size()){
+                                for (int i = loadData; i<loadData+10; i++){
+                                    suratModel = new SuratModel();
+                                    JSONObject jsonObject = jsonArray.getJSONObject(i);
+                                    suratModel.setNama(jsonObject.getString("nama"));
+                                    suratModel.setAsma(jsonObject.getString("asma"));
+                                    suratModel.setArti(jsonObject.getString("arti"));
+                                    suratModel.setNomor(jsonObject.getString("nomor"));
+                                    listSurat.add(suratModel);
+                                    if (jsonArray.length() <= listSurat.size()){
+                                        break;
+                                    }
+                                }
+                                loadData = listSurat.size();
+
+                                // Surat recycler view
+                                layoutManagerSurat = new LinearLayoutManager(MainActivity.this, LinearLayoutManager.VERTICAL, false);
+                                recyclerViewSurat.setLayoutManager(layoutManagerSurat);
+
+                                adapterSurat = new SuratAdapter(MainActivity.this, listSurat);
+                                recyclerViewSurat.setAdapter(adapterSurat);
+                                adapterSurat.notifyDataSetChanged();
                             }
-
-                            // Surat recycler view
-                            layoutManagerSurat = new LinearLayoutManager(MainActivity.this, LinearLayoutManager.VERTICAL, false);
-                            recyclerViewSurat.setLayoutManager(layoutManagerSurat);
-
-                            adapterSurat = new SuratAdapter(MainActivity.this, listSurat);
-                            recyclerViewSurat.setAdapter(adapterSurat);
-                            adapterSurat.notifyDataSetChanged();
                         } catch (JSONException e) {
+                            System.out.println("ini errornya woy"+ e.toString());
                             Toast.makeText(MainActivity.this, e.toString(), Toast.LENGTH_SHORT).show();
                         }
                     }

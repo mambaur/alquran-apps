@@ -25,6 +25,7 @@
             android:id="@+id/toolbar_layout"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
+            android:background="@color/colorWhite"
             app:scrimAnimationDuration="@android:integer/config_shortAnimTime"
             app:contentScrim="@color/colorSuccess"
             app:layout_scrollFlags="scroll|exitUntilCollapsed|enterAlwaysCollapsed">
@@ -159,9 +160,10 @@
     </com.google.android.material.appbar.AppBarLayout>
 
     <androidx.core.widget.NestedScrollView
+        android:id="@+id/nestedScroll"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:background="@null"
+        android:background="@color/colorWhite"
         app:layout_behavior="@string/appbar_scrolling_view_behavior">
 
         <LinearLayout
@@ -182,7 +184,7 @@
                     android:fontFamily="@font/roboto"
                     android:text="Jadwal sholat bulan"
                     android:textColor="@color/colorPrimaryGrey"
-                    android:layout_marginBottom="15dp"
+                    android:layout_marginBottom="20dp"
                     android:textSize="14dp"
                     app:layout_constraintLeft_toLeftOf="parent"
                     app:layout_constraintTop_toTopOf="parent"/>
@@ -196,7 +198,6 @@
                     android:text="Oktober"
                     android:textStyle="bold"
                     android:layout_marginLeft="4dp"
-                    android:layout_marginBottom="10dp"
                     android:textSize="15dp"
                     app:layout_constraintLeft_toRightOf="@+id/txtSlide"
                     app:layout_constraintBottom_toBottomOf="@+id/txtSlide"/>
@@ -206,7 +207,6 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_marginRight="15dp"
-                    android:background="@drawable/bg_outline_light_grey"
                     android:orientation="horizontal"
                     android:paddingHorizontal="10dp"
                     android:paddingVertical="2dp"
@@ -292,11 +292,15 @@
                     <androidx.recyclerview.widget.RecyclerView
                         android:id="@+id/listSurat"
                         android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:orientation="vertical"
-                        android:scrollbarAlwaysDrawVerticalTrack="false"
-                        android:nestedScrollingEnabled="false">
+                        android:layout_height="wrap_content">
                     </androidx.recyclerview.widget.RecyclerView>
+
+                    <ProgressBar
+                        android:id="@+id/pgBar"
+                        android:layout_width="50dp"
+                        android:layout_height="50dp"
+                        android:layout_gravity="center_horizontal"
+                        android:visibility="gone"/>
 
                 </LinearLayout>
             </androidx.constraintlayout.widget.ConstraintLayout>
