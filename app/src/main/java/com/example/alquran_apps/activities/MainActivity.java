@@ -1,15 +1,29 @@
 package com.example.alquran_apps.activities;
 
 import androidx.annotation.NonNull;
+import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.core.app.ActivityCompat;
+import androidx.core.content.ContextCompat;
 import androidx.core.widget.NestedScrollView;
 import androidx.drawerlayout.widget.DrawerLayout;
+import androidx.fragment.app.FragmentManager;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
+import android.Manifest;
 import android.annotation.SuppressLint;
+import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
+import android.content.pm.PackageManager;
+import android.location.Address;
+import android.location.Geocoder;
+import android.location.Location;
+import android.location.LocationListener;
+import android.location.LocationManager;
 import android.os.Bundle;
+import android.provider.Settings;
 import android.util.Log;
 import android.view.Gravity;
 import android.view.MenuItem;
@@ -21,6 +35,7 @@ import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.PopupMenu;
 import android.widget.ProgressBar;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import com.android.volley.Request;
@@ -32,22 +47,29 @@ import com.android.volley.toolbox.Volley;
 import com.example.alquran_apps.R;
 import com.example.alquran_apps.adapters.JadwalAdapter;
 import com.example.alquran_apps.adapters.SuratAdapter;
+import com.example.alquran_apps.fragments.DoaFragment;
 import com.example.alquran_apps.models.JadwalModel;
 import com.example.alquran_apps.models.SuratModel;
+import com.example.alquran_apps.util.Configuration;
 import com.google.android.material.navigation.NavigationView;
 
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import java.io.IOException;
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
+import java.util.Locale;
 
-public class MainActivity extends AppCompatActivity implements View.OnClickListener, NavigationView.OnNavigationItemSelectedListener {
+public class MainActivity extends AppCompatActivity implements View.OnClickListener,
+        NavigationView.OnNavigationItemSelectedListener, LocationListener {
 
-    public static String baseURLSurat = "https://al-quran-8d642.firebaseio.com/data.json?print=pretty";
-    public static String baseURLJadwal = "https://raw.githubusercontent.com/lakuapik/jadwalsholatorg/master/adzan/";
-    public static String getURLJadwal = "semarang/2020/10.json";
+    private String getURLJadwal = "/2020/10";
+    private String cityEndpoint = "jakartautara";
     private List<JadwalModel> sholat;
     private List<SuratModel> listSurat;
     private RecyclerView recyclerViewJadwal, recyclerViewSurat;
@@ -60,16 +82,20 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     private int loadData = 0;
 
     // Interface
-    ImageButton btnMenu;
-    ImageView drawMenu;
-    DrawerLayout drawer;
-    NavigationView nav;
-    ProgressBar progressBar;
-    NestedScrollView nestedScrollView;
+    private ImageButton btnMenu;
+    private ImageView drawMenu;
+    private DrawerLayout drawer;
+    private NavigationView nav;
+    private ProgressBar progressBar;
+    private NestedScrollView nestedScrollView;
+    private TextView txtLocation, txtBulan;
 
     // AutoCompleteTextView
-    AutoCompleteTextView ACtv;
-    private static final String[] COUNTRIES = new String[] {"Indonesia", "Malaysia", "Maluku", "Jepang", "Thailand", "China"};
+    private AutoCompleteTextView ACtv;
+    private static final String[] COUNTRIES = new String[]{"Indonesia", "Malaysia", "Maluku", "Jepang", "Thailand", "China"};
+
+    // Location
+    LocationManager locationManager;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -81,6 +107,8 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         recyclerViewJadwal = findViewById(R.id.listSholat);
         nestedScrollView = findViewById(R.id.nestedScroll);
         btnMenu = findViewById(R.id.btnMenu);
+        txtLocation = findViewById(R.id.txtLocation);
+        txtBulan = findViewById(R.id.txtBulan);
         progressBar = findViewById(R.id.pgBar);
         drawMenu = findViewById(R.id.menu_icon);
         ACtv = findViewById(R.id.ACtv);
@@ -88,6 +116,14 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         nav = findViewById(R.id.nav_view);
 
         listSurat = new ArrayList<>();
+
+        // Get date month now
+        getMonth();
+
+        // Permission for location
+        grantPermission();
+        checkPermission();
+        getLocation();
 
         getJadwal();
         getSurat();
@@ -114,16 +150,17 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
 
         btnMenu.setOnClickListener(this);
 
+        // Nested Scroll view load more
         nestedScrollView.setOnScrollChangeListener(new NestedScrollView.OnScrollChangeListener() {
             @Override
             public void onScrollChange(NestedScrollView v, int scrollX, int scrollY, int oldScrollX, int oldScrollY) {
-                if (v.getChildAt(v.getChildCount()-1) != null){
+                if (v.getChildAt(v.getChildCount() - 1) != null) {
                     if ((scrollY >= (v.getChildAt(v.getChildCount() - 1).getMeasuredHeight() - v.getMeasuredHeight()))
-                            && scrollY > oldScrollY){
+                            && scrollY > oldScrollY) {
                         currentItems = layoutManagerSurat.getChildCount();
                         totalItems = layoutManagerSurat.getItemCount();
                         scrollOutItems = layoutManagerSurat.findFirstVisibleItemPosition();
-                        if (isScrolling && (currentItems + scrollOutItems) >= totalItems){
+                        if (isScrolling && (currentItems + scrollOutItems) >= totalItems) {
                             isScrolling = false;
                             progressBar.setVisibility(View.VISIBLE);
                             getSurat();
@@ -134,6 +171,66 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                 }
             }
         });
+
+        FragmentManager fm = getSupportFragmentManager();
+        fm.beginTransaction().add(R.id.doaContainer, new DoaFragment()).commit();
+    }
+
+    private void getMonth(){
+        Date date = new Date();
+        DateFormat dateFormat = new SimpleDateFormat("MMMM", Locale.getDefault());
+        DateFormat urlMonth = new SimpleDateFormat("/yyyy/MM");
+        getURLJadwal = urlMonth.format(date);
+        String month = dateFormat.format(date);
+        txtBulan.setText(month);
+    }
+
+    private void grantPermission() {
+        if (ContextCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED
+                && ContextCompat.checkSelfPermission(this, Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
+            ActivityCompat.requestPermissions(this, new String[]{Manifest.permission.ACCESS_FINE_LOCATION,
+                    Manifest.permission.ACCESS_COARSE_LOCATION}, 100);
+        }
+    }
+
+    private void checkPermission() {
+        LocationManager lm = (LocationManager) getSystemService(Context.LOCATION_SERVICE);
+        boolean gpsEnabled = false;
+        boolean networkEnabled = false;
+        try {
+            gpsEnabled = lm.isProviderEnabled(LocationManager.GPS_PROVIDER);
+            networkEnabled = lm.isProviderEnabled(LocationManager.NETWORK_PROVIDER);
+
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+
+        if (!gpsEnabled && !networkEnabled) {
+            new AlertDialog.Builder(this)
+                    .setIcon(R.drawable.ic_help)
+                    .setTitle("Enable GPS Service")
+                    .setCancelable(false)
+                    .setPositiveButton("Enable", new DialogInterface.OnClickListener() {
+                        @Override
+                        public void onClick(DialogInterface dialog, int which) {
+                            startActivity(new Intent(Settings.ACTION_LOCATION_SOURCE_SETTINGS));
+                        }
+                    }).setNegativeButton("Cancel", null)
+                    .show();
+        }
+    }
+
+    private void getLocation() {
+        try {
+            locationManager = (LocationManager) getSystemService(Context.LOCATION_SERVICE);
+            if (ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
+                ActivityCompat.requestPermissions(this, new String[]{Manifest.permission.ACCESS_FINE_LOCATION,
+                        Manifest.permission.ACCESS_COARSE_LOCATION}, 100);
+            }
+            locationManager.requestLocationUpdates(LocationManager.NETWORK_PROVIDER, 500, 5, (LocationListener) this);
+        }catch (Exception e){
+            e.printStackTrace();
+        }
     }
 
     @Override
@@ -145,7 +242,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
 
     void getJadwal(){
         RequestQueue requestQueue = Volley.newRequestQueue(this);
-        StringRequest stringRequest = new StringRequest(Request.Method.GET, baseURLJadwal + getURLJadwal,
+        StringRequest stringRequest = new StringRequest(Request.Method.GET, Configuration.baseURLJadwal + cityEndpoint + getURLJadwal+".json",
                 new Response.Listener<String>() {
                     @Override
                     public void onResponse(String response) {
@@ -160,6 +257,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                                 jadwalModel.setIsya(jsonObject.getString("isya"));
                                 jadwalModel.setShubuh(jsonObject.getString("shubuh"));
                                 jadwalModel.setMagrib(jsonObject.getString("magrib"));
+                                jadwalModel.setTanggal(jsonObject.getString("tanggal"));
                                 sholat.add(jadwalModel);
                             }
 
@@ -185,7 +283,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
 
     void getSurat(){
         RequestQueue requestQueue = Volley.newRequestQueue(this);
-        StringRequest stringRequest = new StringRequest(Request.Method.GET, baseURLSurat,
+        StringRequest stringRequest = new StringRequest(Request.Method.GET, Configuration.baseURLSurat,
                 new Response.Listener<String>() {
                     @Override
                     public void onResponse(String response) {
@@ -200,6 +298,9 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                                     suratModel.setAsma(jsonObject.getString("asma"));
                                     suratModel.setArti(jsonObject.getString("arti"));
                                     suratModel.setNomor(jsonObject.getString("nomor"));
+                                    suratModel.setKeterangan(jsonObject.getString("keterangan"));
+                                    suratModel.setAudio(jsonObject.getString("audio"));
+                                    suratModel.setType(jsonObject.getString("type"));
                                     listSurat.add(suratModel);
                                     if (jsonArray.length() <= listSurat.size()){
                                         break;
@@ -216,8 +317,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                                 adapterSurat.notifyDataSetChanged();
                             }
                         } catch (JSONException e) {
-                            System.out.println("ini errornya woy"+ e.toString());
-                            Toast.makeText(MainActivity.this, e.toString(), Toast.LENGTH_SHORT).show();
+                            e.printStackTrace();
                         }
                     }
                 }, new Response.ErrorListener() {
@@ -270,10 +370,12 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     public boolean onNavigationItemSelected(@NonNull MenuItem item) {
         switch (item.getItemId()){
             case R.id.menu1:
-                Toast.makeText(this, "Menu Kompas", Toast.LENGTH_SHORT).show();
+                Intent intent = new Intent(MainActivity.this, CompassActivity.class);
+                startActivity(intent);
                 break;
             case R.id.menu2:
-                Toast.makeText(this, "Menu Rating", Toast.LENGTH_SHORT).show();
+                Intent intentMap = new Intent(MainActivity.this, MapsActivity.class);
+                startActivity(intentMap);
                 break;
             case R.id.menu3:
                 Toast.makeText(this, "Menu Tentang", Toast.LENGTH_SHORT).show();
@@ -282,5 +384,39 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         DrawerLayout drawer = findViewById(R.id.drawer_layout);
         drawer.closeDrawer(Gravity.LEFT);
         return true;
+    }
+
+    // Handle location sholat jadwal
+    @Override
+    public void onLocationChanged(Location location) {
+        try {
+            Geocoder geocoder = new Geocoder(getApplicationContext(), Locale.getDefault());
+            List<Address> addresses = geocoder.getFromLocation(location.getLatitude(), location.getLongitude(), 1);
+//            System.out.println("ini adalah lokasi anda = "+addresses.toString());
+
+            String[] city = addresses.get(0).getSubAdminArea().split(" ", 2);
+            String kota = city[1];
+            txtLocation.setText(kota);
+
+            cityEndpoint = kota.replaceAll("\\s+", "").toLowerCase();
+            getJadwal();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+
+    @Override
+    public void onStatusChanged(String provider, int status, Bundle extras) {
+
+    }
+
+    @Override
+    public void onProviderEnabled(String provider) {
+
+    }
+
+    @Override
+    public void onProviderDisabled(String provider) {
+
     }
 }

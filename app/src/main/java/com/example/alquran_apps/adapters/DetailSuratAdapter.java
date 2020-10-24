@@ -10,15 +10,15 @@ import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.example.alquran_apps.R;
-import com.example.alquran_apps.models.DetailSuratModel;
+import com.example.alquran_apps.models.AyatModel;
 
 import java.util.List;
 
 public class DetailSuratAdapter extends RecyclerView.Adapter<DetailSuratAdapter.HolderData> {
-    List<DetailSuratModel> listDetail;
+    List<AyatModel> listDetail;
     LayoutInflater inflater;
 
-    public DetailSuratAdapter(Context context, List<DetailSuratModel> listDetail) {
+    public DetailSuratAdapter(Context context, List<AyatModel> listDetail) {
         this.inflater = LayoutInflater.from(context);
         this.listDetail = listDetail;
     }
@@ -32,8 +32,8 @@ public class DetailSuratAdapter extends RecyclerView.Adapter<DetailSuratAdapter.
 
     @Override
     public void onBindViewHolder(@NonNull HolderData holder, int position) {
-        holder.txtAyat.setText(listDetail.get(position).getAyat());
-        holder.txtTerjemahan.setText(listDetail.get(position).getTranslate());
+        holder.txtAyat.setText(listDetail.get(position).getText());
+        holder.txtTerjemahan.setText(listDetail.get(position).getTranslation_id());
     }
 
     @Override

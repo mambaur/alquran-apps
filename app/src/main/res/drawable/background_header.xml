@@ -6,9 +6,10 @@
         android:bottomLeftRadius="30dp"
         android:bottomRightRadius="30dp"/>
 
-    <solid android:color="@color/colorSuccess"/>
+<!--    <solid android:color="@color/colorSuccess"/>-->
 
-<!--    <gradient-->
-<!--        android:startColor="@color/colorGreen5"-->
-<!--        android:endColor="@color/colorWhite"/>-->
+    <gradient
+        android:startColor="@color/colorLightGreen"
+        android:endColor="@color/colorGreen"
+        android:angle="270"/>
 </shape>

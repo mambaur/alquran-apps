@@ -1,11 +1,11 @@
-<resources>
+<resources xmlns:tools="http://schemas.android.com/tools">
 
     <!-- Base application theme. -->
     <style name="AppTheme" parent="Theme.AppCompat.Light.NoActionBar">
         <!-- Customize your theme here. -->
 <!--        <item name="colorPrimary">@color/colorPrimary</item>-->
-        <item name="colorPrimaryDark">@color/colorSuccess</item>
-        <item name="colorAccent">@color/colorSuccess</item>
+        <item name="colorPrimaryDark">@color/colorLightGreen</item>
+        <item name="colorAccent">@color/colorLightGreen</item>
     </style>
 
     <style name="DefaultTheme" parent="Theme.AppCompat.Light.DarkActionBar">
@@ -24,16 +24,28 @@
 
     <style name="MainTheme" parent="Theme.AppCompat.Light.DarkActionBar">
         <!-- Customize your theme here. -->
-        <item name="colorPrimary">@color/colorSuccess</item>
-        <item name="colorPrimaryDark">@color/colorSuccess</item>
-        <item name="colorAccent">@color/colorSuccess</item>
+        <item name="colorPrimary">@color/colorLightGreen2</item>
+        <item name="colorPrimaryDark">@color/colorLightGreen2</item>
+        <item name="colorAccent">@color/colorLightGreen2</item>
+        <item name="android:actionMenuTextColor">@color/colorGreen</item>
     </style>
 
-    <style name="DetailSuratTheme" parent="Theme.AppCompat.Light.DarkActionBar">
+    <style name="DetailSuratTheme" parent="Theme.AppCompat.Light.NoActionBar">
         <!-- Customize your theme here. -->
-        <item name="colorPrimary">@color/colorWhite</item>
         <item name="colorPrimaryDark">@color/colorWhite</item>
         <item name="colorAccent">@color/colorWhite</item>
+        <item name="android:statusBarColor" tools:targetApi="lollipop">@color/colorWhite</item>
+        <item name="android:windowLightStatusBar" tools:targetApi="m">true</item>
     </style>
+
+    <style name="CompassTheme" parent="Theme.AppCompat.Light.NoActionBar">
+        <!-- Customize your theme here. -->
+        <item name="colorPrimaryDark">@color/colorWhite</item>
+        <item name="colorAccent">@color/colorPrimaryGrey</item>
+        <item name="android:statusBarColor" tools:targetApi="lollipop">@color/colorWhite</item>
+        <item name="android:windowLightStatusBar" tools:targetApi="m">true</item>
+    </style>
+
+
 
 </resources>

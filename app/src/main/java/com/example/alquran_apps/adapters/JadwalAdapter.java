@@ -12,7 +12,12 @@ import androidx.recyclerview.widget.RecyclerView;
 import com.example.alquran_apps.R;
 import com.example.alquran_apps.models.JadwalModel;
 
+import java.text.DateFormat;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
+import java.util.Date;
 import java.util.List;
+import java.util.Locale;
 
 public class JadwalAdapter extends RecyclerView.Adapter<JadwalAdapter.HolderData>{
     private LayoutInflater inflater;
@@ -32,11 +37,29 @@ public class JadwalAdapter extends RecyclerView.Adapter<JadwalAdapter.HolderData
 
     @Override
     public void onBindViewHolder(@NonNull HolderData holder, int position) {
+        String dateRespon = sholat.get(position).getTanggal();
+        DateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd", Locale.getDefault());
+        String day = "Senin";
+        String datetxt = "01 Januari 2021";
+        try {
+            Date date = dateFormat.parse(dateRespon);
+            DateFormat dateFull = new SimpleDateFormat("dd/MMM/yyyy");
+            datetxt = dateFull.format(date);
+            DateFormat dayFormat = new SimpleDateFormat("EEEE");
+            day = dayFormat.format(date);
+            System.out.println("Ini adalah tanggal sekarang njirr "+date);
+        } catch (ParseException e) {
+            e.printStackTrace();
+        }
+
 
         holder.txtSubuh.setText(sholat.get(position).getShubuh());
         holder.txtDzuhur.setText(sholat.get(position).getDzuhur());
         holder.txtAshr.setText(sholat.get(position).getAshr());
         holder.txtMagrib.setText(sholat.get(position).getMagrib());
+        holder.txtIsya.setText(sholat.get(position).getIsya());
+        holder.txtTanggal.setText(datetxt);
+        holder.txtNameHeader.setText("Hari "+ day);
     }
 
     @Override
@@ -45,7 +68,7 @@ public class JadwalAdapter extends RecyclerView.Adapter<JadwalAdapter.HolderData
     }
 
     static class HolderData extends RecyclerView.ViewHolder{
-        TextView txtSubuh, txtDzuhur, txtAshr, txtMagrib, txtIsya;
+        TextView txtSubuh, txtDzuhur, txtAshr, txtMagrib, txtIsya, txtTanggal, txtNameHeader;
 
         HolderData(@NonNull View itemView) {
             super(itemView);
@@ -54,6 +77,8 @@ public class JadwalAdapter extends RecyclerView.Adapter<JadwalAdapter.HolderData
             txtAshr = itemView.findViewById(R.id.txtAshr);
             txtMagrib = itemView.findViewById(R.id.txtMagrib);
             txtIsya = itemView.findViewById(R.id.txtIsya);
+            txtTanggal = itemView.findViewById(R.id.txtTanggal);
+            txtNameHeader = itemView.findViewById(R.id.txtNameHeader);
         }
     }
 }

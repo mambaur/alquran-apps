@@ -19,17 +19,17 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class JadwalRepository {
-    public static String baseURL = "https://raw.githubusercontent.com/lakuapik/jadwalsholatorg/master/adzan/";
-    public static String getURL = "semarang/2020/10.json";
-    RequestQueue requestQueue;
-    List<JadwalModel> listJadwal;
+    private static String baseURL = "https://raw.githubusercontent.com/lakuapik/jadwalsholatorg/master/adzan/";
+    private static String getURL = "semarang/2020/10.json";
+    private Context context;
+    private List<JadwalModel> listJadwal;
 
     public JadwalRepository(Context context) {
-        this.requestQueue = Volley.newRequestQueue(context);
-        this.listJadwal = new ArrayList<JadwalModel>();
+        this.context = context;
     }
 
     public List<JadwalModel> getJadwalToday(){
+        RequestQueue requestQueue = Volley.newRequestQueue(context);
         StringRequest stringRequest = new StringRequest(Request.Method.GET, baseURL + getURL,
                 new Response.Listener<String>() {
                     @Override
@@ -38,7 +38,7 @@ public class JadwalRepository {
                         try {
                             JSONArray jsonArray = new JSONArray(response);
                             for (int i=0; i<jsonArray.length(); i++){
-
+                                listJadwal = new ArrayList<>();
                                 JSONObject jsonObject = jsonArray.getJSONObject(i);
                                 System.out.println("ini hasil "+ jsonObject.getString("ashr"));
                                 jadwalModel.setAshr(jsonObject.getString("ashr"));

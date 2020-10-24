@@ -19,4 +19,17 @@
     <color name="colorLightGrey3">#F1F1F1</color>
     <color name="colorGrey">#8A8A8A</color>
     <color name="colorPrimaryGrey">#656565</color>
+    <color name="colorWhiteTransparent">#77FFFFFF</color>
+
+<!--    tcolor-->
+    <color name="colorGreen">#169D1F</color>
+    <color name="colorPrimaryGreen">#03AC0E</color>
+    <color name="colorLightGreen">#03CA69</color>
+    <color name="colorLightGreen2">#309D46</color>
+    <color name="colorBgGreen">#F4FDFB</color>
+    <color name="colorBgGreen2">#DFFAF2</color>
+    <color name="colorBgGreen3">#FCFEFE</color>
+    <color name="colorWhiteGreen">#DFFFEC</color>
+    <color name="colorOrange">#F35723</color>
+    <color name="colorLightOrange">#FF8842</color>
 </resources>
