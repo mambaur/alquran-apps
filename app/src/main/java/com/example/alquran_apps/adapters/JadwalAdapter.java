@@ -47,7 +47,6 @@ public class JadwalAdapter extends RecyclerView.Adapter<JadwalAdapter.HolderData
             datetxt = dateFull.format(date);
             DateFormat dayFormat = new SimpleDateFormat("EEEE");
             day = dayFormat.format(date);
-            System.out.println("Ini adalah tanggal sekarang njirr "+date);
         } catch (ParseException e) {
             e.printStackTrace();
         }

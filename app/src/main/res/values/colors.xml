@@ -24,6 +24,7 @@
 <!--    tcolor-->
     <color name="colorGreen">#169D1F</color>
     <color name="colorPrimaryGreen">#03AC0E</color>
+    <color name="colorGreenSoft">#3C9B74</color>
     <color name="colorLightGreen">#03CA69</color>
     <color name="colorLightGreen2">#309D46</color>
     <color name="colorBgGreen">#F4FDFB</color>
@@ -32,4 +33,13 @@
     <color name="colorWhiteGreen">#DFFFEC</color>
     <color name="colorOrange">#F35723</color>
     <color name="colorLightOrange">#FF8842</color>
+    
+    
+    <!-- green gradient -->
+    <color name="lushGreen1">#56ab2f</color>
+    <color name="lushGreen2"> #a8e063</color>
+    <color name="lemonGreen1"> #3CA55C</color>
+    <color name="lemonGreen2"> #B5AC49</color>
+    <color name="mojitoGreen1">#1D976C</color>
+    <color name="mojitoGreen2">#93F9B9</color>
 </resources>

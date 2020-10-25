@@ -2,6 +2,7 @@ package com.example.alquran_apps.adapters;
 
 import android.content.Context;
 import android.content.Intent;
+import android.os.Build;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -9,12 +10,14 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.annotation.NonNull;
+import androidx.annotation.RequiresApi;
 import androidx.cardview.widget.CardView;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.example.alquran_apps.R;
 import com.example.alquran_apps.activities.DetailSurat;
 import com.example.alquran_apps.models.SuratModel;
+import com.example.alquran_apps.util.Configuration;
 
 import java.util.List;
 
@@ -22,7 +25,6 @@ public class SuratAdapter extends RecyclerView.Adapter<SuratAdapter.HolderData> 
     private Context context;
     private LayoutInflater inflater;
     private List<SuratModel> listSurat;
-    private static final String NOMOR_SURAT = "no_surat";
 
     public SuratAdapter(Context context, List<SuratModel> listSurat) {
         this.inflater = LayoutInflater.from(context);
@@ -37,8 +39,9 @@ public class SuratAdapter extends RecyclerView.Adapter<SuratAdapter.HolderData> 
         return new HolderData(view);
     }
 
+    @RequiresApi(api = Build.VERSION_CODES.M)
     @Override
-    public void onBindViewHolder(@NonNull HolderData holder, int position) {
+    public void onBindViewHolder(@NonNull HolderData holder, final int position) {
         holder.txtSurat.setText(listSurat.get(position).getNama());
         holder.txtNomor.setText(listSurat.get(position).getNomor());
         holder.txtArti.setText(listSurat.get(position).getArti());
@@ -51,7 +54,7 @@ public class SuratAdapter extends RecyclerView.Adapter<SuratAdapter.HolderData> 
             @Override
             public void onClick(View v) {
                 Intent intent = new Intent(context, DetailSurat.class);
-                intent.putExtra(NOMOR_SURAT, nomor);
+                intent.putExtra(Configuration.NOMOR_SURAT, nomor);
                 context.startActivity(intent);
             }
         });

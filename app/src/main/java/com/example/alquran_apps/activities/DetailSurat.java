@@ -6,6 +6,7 @@ import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import android.annotation.SuppressLint;
+import android.content.Intent;
 import android.media.MediaPlayer;
 import android.os.Bundle;
 import android.os.Handler;
@@ -13,13 +14,20 @@ import android.view.MotionEvent;
 import android.view.View;
 import android.widget.ImageButton;
 import android.widget.ImageView;
+import android.widget.LinearLayout;
 import android.widget.SeekBar;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.android.volley.AuthFailureError;
+import com.android.volley.NetworkError;
+import com.android.volley.NoConnectionError;
+import com.android.volley.ParseError;
 import com.android.volley.Request;
 import com.android.volley.RequestQueue;
 import com.android.volley.Response;
+import com.android.volley.ServerError;
+import com.android.volley.TimeoutError;
 import com.android.volley.VolleyError;
 import com.android.volley.toolbox.StringRequest;
 import com.android.volley.toolbox.Volley;
@@ -42,6 +50,7 @@ public class DetailSurat extends AppCompatActivity implements View.OnClickListen
     private AyatModel ayatModel;
     private List<AyatModel> listDetail;
     private String nomorSurat, audioSurat;
+    private String namaSurat = "";
 
     // Interface
     private ImageButton btnPlay, btnPlayLayout;
@@ -50,6 +59,7 @@ public class DetailSurat extends AppCompatActivity implements View.OnClickListen
     private ConstraintLayout audioLayout;
     private SeekBar seekBar;
     private TextView txtAudioStart, txtAudioEnd;
+    private LinearLayout btnTafsir;
 
     MediaPlayer mediaPlayer;
     Handler handler = new Handler();
@@ -73,6 +83,7 @@ public class DetailSurat extends AppCompatActivity implements View.OnClickListen
         audioLayout = findViewById(R.id.audioLayout);
         btnClose = findViewById(R.id.btnClose);
         seekBar = findViewById(R.id.seekbar);
+        btnTafsir = findViewById(R.id.btnTafsir);
 
         // Audio player
         mediaPlayer = new MediaPlayer();
@@ -82,6 +93,7 @@ public class DetailSurat extends AppCompatActivity implements View.OnClickListen
         btnPlayLayout.setOnClickListener(this);
         btnBack.setOnClickListener(this);
         btnClose.setOnClickListener(this);
+        btnTafsir.setOnClickListener(this);
 
         nomorSurat = getIntent().getStringExtra(Configuration.NOMOR_SURAT);
 
@@ -206,18 +218,8 @@ public class DetailSurat extends AppCompatActivity implements View.OnClickListen
                     txtTurun.setText(jsonObject.getString("type"));
                     txtAsma.setText(jsonObject.getJSONObject("name_translations").getString("ar"));
 
-                    // source title kemenag
-//                    jsonObject.getJSONObject("tafsir")
-//                            .getJSONObject("id")
-//                            .getJSONObject("kemenag")
-//                            .getString("source");
-                    // isi tafsir
-//                    jsonObject.getJSONObject("tafsir")
-//                            .getJSONObject("id")
-//                            .getJSONObject("kemenag")
-//                            .getString("text");
-
                     audioSurat = recitations.getJSONObject(0).getString("audio_url");
+                    namaSurat = jsonObject.getString("name");
 
                     // RecyclerView Detail Surat
                     layoutManager = new LinearLayoutManager(DetailSurat.this, LinearLayoutManager.VERTICAL, false);
@@ -233,7 +235,19 @@ public class DetailSurat extends AppCompatActivity implements View.OnClickListen
         }, new Response.ErrorListener() {
             @Override
             public void onErrorResponse(VolleyError error) {
-                Toast.makeText(DetailSurat.this, error.toString(), Toast.LENGTH_SHORT).show();
+                if (error instanceof NetworkError){
+                    Toast.makeText(DetailSurat.this, "Koneksi error bro!", Toast.LENGTH_SHORT).show();
+                }else if(error instanceof ServerError){
+                    Toast.makeText(DetailSurat.this, "Maaf bro, server sedang bermasalah!", Toast.LENGTH_SHORT).show();
+                }else if(error instanceof AuthFailureError){
+                    Toast.makeText(DetailSurat.this, "Maaf bro, API key kami sedang bermasalah!", Toast.LENGTH_SHORT).show();
+                }else if(error instanceof ParseError){
+                    Toast.makeText(DetailSurat.this, "Parsing data salah!", Toast.LENGTH_SHORT).show();
+                }else if(error instanceof NoConnectionError){
+                    Toast.makeText(DetailSurat.this, "Waduh, tidak ada koneksi internet bro!", Toast.LENGTH_SHORT).show();
+                }else if (error instanceof TimeoutError){
+                    Toast.makeText(DetailSurat.this, "Kelamaan nunggu bro, muat ulang aja!", Toast.LENGTH_SHORT).show();
+                }
             }
         });
         requestQueue.add(stringRequest);
@@ -287,6 +301,12 @@ public class DetailSurat extends AppCompatActivity implements View.OnClickListen
                     btnPlayLayout.setImageResource(R.drawable.ic_pause);
                     updateSeekbar();
                 }
+                break;
+            case R.id.btnTafsir:
+                Intent iTafsir = new Intent(this, TafsirActivity.class);
+                iTafsir.putExtra(Configuration.NAMA_SURAT, namaSurat);
+                iTafsir.putExtra(Configuration.NOMOR_SURAT, nomorSurat);
+                startActivity(iTafsir);
                 break;
         }
     }

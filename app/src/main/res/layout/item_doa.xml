@@ -4,12 +4,14 @@
     android:layout_width="wrap_content"
     android:layout_height="wrap_content">
     <androidx.cardview.widget.CardView
+        android:id="@+id/cvDoa"
         android:layout_width="115dp"
         android:layout_height="wrap_content"
         app:cardCornerRadius="10dp"
+        android:layout_marginRight="10dp"
         android:elevation="2dp"
         android:layout_marginBottom="5dp"
-        android:layout_marginLeft="15dp">
+        android:layout_marginLeft="2dp">
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
@@ -28,14 +30,21 @@
                 android:layout_height="wrap_content"
                 android:text="Doa Bersin"
                 android:textStyle="bold"
+                android:ellipsize="end"
+                android:maxLines="1"
+                android:singleLine="true"
                 android:fontFamily="@font/roboto"
                 android:layout_marginTop="2dp"
                 android:paddingHorizontal="10dp"/>
             <TextView
+                android:id="@+id/txtSubJudul"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="Bismillah"
                 android:textSize="9dp"
+                android:ellipsize="end"
+                android:maxLines="1"
+                android:singleLine="true"
                 android:fontFamily="@font/roboto"
                 android:layout_marginHorizontal="10dp"
                 android:paddingBottom="5dp"

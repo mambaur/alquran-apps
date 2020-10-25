@@ -33,7 +33,6 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.net.URL;
-import java.nio.Buffer;
 import java.util.HashMap;
 import java.util.List;
 
@@ -87,7 +86,6 @@ public class MapsActivity extends AppCompatActivity {
                 if (location != null){
                     currentLat = location.getLatitude();
                     currentLong = location.getLongitude();
-                    System.out.println("ini adalah nilai dari current latitude dan longitude "+currentLat+", "+currentLong);
                     supportMapFragment.getMapAsync(new OnMapReadyCallback() {
                         @Override
                         public void onMapReady(GoogleMap googleMap) {

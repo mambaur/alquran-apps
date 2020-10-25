@@ -46,6 +46,12 @@
         <item name="android:windowLightStatusBar" tools:targetApi="m">true</item>
     </style>
 
-
+    <style name="BasicTheme" parent="Theme.AppCompat.Light.NoActionBar">
+        <!-- Customize your theme here. -->
+        <item name="colorPrimaryDark">@color/colorWhite</item>
+        <item name="colorAccent">@color/colorWhite</item>
+        <item name="android:statusBarColor" tools:targetApi="lollipop">@color/colorWhite</item>
+        <item name="android:windowLightStatusBar" tools:targetApi="m">true</item>
+    </style>
 
 </resources>

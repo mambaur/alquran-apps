@@ -24,7 +24,6 @@ import android.location.LocationListener;
 import android.location.LocationManager;
 import android.os.Bundle;
 import android.provider.Settings;
-import android.util.Log;
 import android.view.Gravity;
 import android.view.MenuItem;
 import android.view.View;
@@ -38,9 +37,15 @@ import android.widget.ProgressBar;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.android.volley.AuthFailureError;
+import com.android.volley.NetworkError;
+import com.android.volley.NoConnectionError;
+import com.android.volley.ParseError;
 import com.android.volley.Request;
 import com.android.volley.RequestQueue;
 import com.android.volley.Response;
+import com.android.volley.ServerError;
+import com.android.volley.TimeoutError;
 import com.android.volley.VolleyError;
 import com.android.volley.toolbox.StringRequest;
 import com.android.volley.toolbox.Volley;
@@ -92,7 +97,6 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
 
     // AutoCompleteTextView
     private AutoCompleteTextView ACtv;
-    private static final String[] COUNTRIES = new String[]{"Indonesia", "Malaysia", "Maluku", "Jepang", "Thailand", "China"};
 
     // Location
     LocationManager locationManager;
@@ -129,12 +133,19 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         getSurat();
 
         // AutoCompleteTextView
-        ArrayAdapter<String> ACadapter = new ArrayAdapter<>(this, android.R.layout.simple_dropdown_item_1line, COUNTRIES);
+        ArrayAdapter<String> ACadapter = new ArrayAdapter<>(this, android.R.layout.simple_dropdown_item_1line, Configuration.SURAT);
         ACtv.setAdapter(ACadapter);
+        ACtv.setDropDownWidth(getResources().getDisplayMetrics().widthPixels);
+        ACtv.setDropDownVerticalOffset(8);
         ACtv.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-                Toast.makeText(MainActivity.this, ACtv.getText().toString(), Toast.LENGTH_SHORT).show();
+                String text = ACtv.getText().toString();
+                String[] parts = text.split(" ");
+                String lastWord = parts[parts.length - 1];
+                Intent intent = new Intent(MainActivity.this, DetailSurat.class);
+                intent.putExtra(Configuration.NOMOR_SURAT, lastWord);
+                startActivity(intent);
             }
         });
 
@@ -275,7 +286,19 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                 }, new Response.ErrorListener() {
             @Override
             public void onErrorResponse(VolleyError error) {
-                Log.d("Get Jadwal Error : ", error.toString());
+                if (error instanceof NetworkError){
+                    Toast.makeText(MainActivity.this, "Koneksi error bro!", Toast.LENGTH_SHORT).show();
+                }else if(error instanceof ServerError){
+                    Toast.makeText(MainActivity.this, "Maaf bro, server sedang bermasalah!", Toast.LENGTH_SHORT).show();
+                }else if(error instanceof AuthFailureError){
+                    Toast.makeText(MainActivity.this, "Maaf bro, API key kami sedang bermasalah!", Toast.LENGTH_SHORT).show();
+                }else if(error instanceof ParseError){
+                    Toast.makeText(MainActivity.this, "Parsing data salah!", Toast.LENGTH_SHORT).show();
+                }else if(error instanceof NoConnectionError){
+                    Toast.makeText(MainActivity.this, "Waduh, tidak ada koneksi internet bro!", Toast.LENGTH_SHORT).show();
+                }else if (error instanceof TimeoutError){
+                    Toast.makeText(MainActivity.this, "Kelamaan nunggu bro, muat ulang aja!", Toast.LENGTH_SHORT).show();
+                }
             }
         });
         requestQueue.add(stringRequest);
@@ -323,7 +346,19 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                 }, new Response.ErrorListener() {
             @Override
             public void onErrorResponse(VolleyError error) {
-                Log.d("Get Surat Error : ", error.toString());
+                if (error instanceof NetworkError){
+                    Toast.makeText(MainActivity.this, "Koneksi error bro!", Toast.LENGTH_SHORT).show();
+                }else if(error instanceof ServerError){
+                    Toast.makeText(MainActivity.this, "Maaf bro, server sedang bermasalah!", Toast.LENGTH_SHORT).show();
+                }else if(error instanceof AuthFailureError){
+                    Toast.makeText(MainActivity.this, "Maaf bro, API key kami sedang bermasalah!", Toast.LENGTH_SHORT).show();
+                }else if(error instanceof ParseError){
+                    Toast.makeText(MainActivity.this, "Parsing data salah!", Toast.LENGTH_SHORT).show();
+                }else if(error instanceof NoConnectionError){
+                    Toast.makeText(MainActivity.this, "Waduh, tidak ada koneksi internet bro!", Toast.LENGTH_SHORT).show();
+                }else if (error instanceof TimeoutError){
+                    Toast.makeText(MainActivity.this, "Kelamaan nunggu bro, muat ulang aja!", Toast.LENGTH_SHORT).show();
+                }
             }
         });
         requestQueue.add(stringRequest);
@@ -392,7 +427,6 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         try {
             Geocoder geocoder = new Geocoder(getApplicationContext(), Locale.getDefault());
             List<Address> addresses = geocoder.getFromLocation(location.getLatitude(), location.getLongitude(), 1);
-//            System.out.println("ini adalah lokasi anda = "+addresses.toString());
 
             String[] city = addresses.get(0).getSubAdminArea().split(" ", 2);
             String kota = city[1];

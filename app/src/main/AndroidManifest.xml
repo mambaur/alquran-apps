@@ -14,10 +14,19 @@
         android:supportsRtl="true"
         android:theme="@style/AppTheme"
         android:usesCleartextTraffic="true">
+        <activity
+            android:theme="@style/BasicTheme"
+            android:name=".activities.TafsirActivity"/>
+        <activity
+            android:name=".activities.DoaActivity"
+            android:theme="@style/BasicTheme" />
+        <activity
+            android:name=".activities.DetailDoa"
+            android:theme="@style/BasicTheme" />
 
         <meta-data
             android:name="com.google.android.geo.API_KEY"
-            android:value="@string/google_map_key"/>
+            android:value="@string/google_map_key" />
 
         <activity
             android:name=".activities.MapsActivity"

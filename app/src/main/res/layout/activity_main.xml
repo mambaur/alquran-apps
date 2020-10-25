@@ -44,9 +44,10 @@
 
 
                     <ImageView
-                        android:layout_width="290dp"
-                        android:layout_height="150dp"
-                        android:src="@drawable/masjid"
+                        android:layout_width="160dp"
+                        android:layout_height="160dp"
+                        android:layout_marginRight="25dp"
+                        android:src="@drawable/img_masjid"
                         app:layout_constraintRight_toRightOf="parent"
                         app:layout_constraintBottom_toBottomOf="parent"/>
 
@@ -56,7 +57,7 @@
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:layout_margin="10dp"
-                        android:paddingLeft="5dp"
+                        android:paddingLeft="18dp"
                         android:paddingTop="70dp"
                         android:paddingBottom="20dp"
                         android:orientation="vertical"
@@ -83,29 +84,29 @@
                             android:textStyle="bold" />
                     </LinearLayout>
 
-                    <ImageView
-                        android:id="@+id/imgQuran"
-                        android:layout_width="80dp"
-                        android:layout_height="80dp"
-                        android:layout_margin="10dp"
-                        android:layout_marginEnd="16dp"
-                        android:layout_marginRight="16dp"
-                        android:src="@drawable/al_qur_an"
-                        app:layout_constraintBottom_toBottomOf="@+id/linearTitle"
-                        app:layout_constraintEnd_toEndOf="parent"
-                        app:layout_constraintTop_toTopOf="parent"
-                        app:layout_constraintVertical_bias="0.977" />
+<!--                    <ImageView-->
+<!--                        android:id="@+id/imgQuran"-->
+<!--                        android:layout_width="80dp"-->
+<!--                        android:layout_height="80dp"-->
+<!--                        android:layout_margin="10dp"-->
+<!--                        android:layout_marginEnd="16dp"-->
+<!--                        android:layout_marginRight="16dp"-->
+<!--                        android:src="@drawable/al_qur_an"-->
+<!--                        app:layout_constraintBottom_toBottomOf="@+id/linearTitle"-->
+<!--                        app:layout_constraintEnd_toEndOf="parent"-->
+<!--                        app:layout_constraintTop_toTopOf="parent"-->
+<!--                        app:layout_constraintVertical_bias="0.977" />-->
 
-                    <TextView
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:text="القرآن"
-                        android:textSize="40dp"
-                        android:textStyle="bold"
-                        android:textColor="@color/colorWhite"
-                        android:layout_marginBottom="15dp"
-                        app:layout_constraintRight_toLeftOf="@+id/imgQuran"
-                        app:layout_constraintBottom_toBottomOf="@+id/linearTitle"/>
+<!--                    <TextView-->
+<!--                        android:layout_width="wrap_content"-->
+<!--                        android:layout_height="wrap_content"-->
+<!--                        android:text="القرآن"-->
+<!--                        android:textSize="40dp"-->
+<!--                        android:textStyle="bold"-->
+<!--                        android:textColor="@color/colorWhite"-->
+<!--                        android:layout_marginBottom="15dp"-->
+<!--                        app:layout_constraintRight_toLeftOf="@+id/imgQuran"-->
+<!--                        app:layout_constraintBottom_toBottomOf="@+id/linearTitle"/>-->
 
                 </androidx.constraintlayout.widget.ConstraintLayout>
             </androidx.constraintlayout.widget.ConstraintLayout>
@@ -138,7 +139,7 @@
                         android:gravity="center"
                         android:padding="2dp"
                         android:layout_weight="8"
-                        android:layout_marginHorizontal="10dp"
+                        android:layout_marginHorizontal="8dp"
                         android:layout_marginLeft="5dp"
                         android:background="@drawable/white_rectangle_background"
                         android:focusable="true"
@@ -156,6 +157,7 @@
                             android:layout_width="match_parent"
                             android:layout_height="30dp"
                             android:background="@null"
+                            android:textColor="@color/colorGrey"
                             android:fontFamily="@font/roboto"
                             android:focusableInTouchMode="true"
                             android:hint="Cari surat..."
@@ -255,7 +257,7 @@
                         android:layout_height="wrap_content"
                         android:layout_gravity="bottom"
                         android:fontFamily="@font/roboto"
-                        android:text="Jakarta Utara"
+                        android:text="Loading..."
                         android:textColor="@color/colorPrimary"
                         android:textStyle="bold" />
 
@@ -266,7 +268,10 @@
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:orientation="horizontal"
-                    android:layout_marginTop="5dp"
+                    android:layout_marginTop="10dp"
+                    android:layout_marginBottom="5dp"
+                    android:paddingHorizontal="10dp"
+                    android:clipToPadding="false"
                     android:scrollbarAlwaysDrawVerticalTrack="false"
                     android:nestedScrollingEnabled="false"
                     app:layout_constraintTop_toBottomOf="@id/txtSlide"
@@ -292,7 +297,7 @@
                     android:textStyle="bold"
                     android:textSize="18dp"
                     android:layout_marginLeft="15dp"
-                    android:layout_marginTop="15dp"
+                    android:layout_marginTop="16dp"
                     app:layout_constraintTop_toBottomOf="@+id/doaContainer"
                     app:layout_constraintStart_toStartOf="parent"/>
                 <TextView
@@ -311,21 +316,20 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_marginRight="15dp"
-                    android:paddingVertical="2dp"
                     android:paddingHorizontal="10dp"
-                    android:background="@drawable/bg_outline_light_grey"
                     app:layout_constraintRight_toRightOf="parent"
                     app:layout_constraintBottom_toBottomOf="@+id/txtSurat">
                     <ImageView
                         android:layout_width="18dp"
                         android:layout_height="18dp"
+                        android:layout_marginRight="3dp"
                         android:layout_gravity="bottom"
                         android:src="@drawable/ic_collections_bookmark"/>
                     <TextView
                         android:id="@+id/suratTotal"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:textColor="@color/colorSuccess"
+                        android:textColor="@color/colorPrimary"
                         android:gravity="bottom"
                         android:textStyle="bold"
                         android:fontFamily="@font/roboto"
@@ -337,7 +341,7 @@
                     android:id="@+id/linearSurat"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:layout_marginTop="15dp"
+                    android:layout_marginTop="12dp"
                     android:orientation="vertical"
                     app:layout_constraintTop_toBottomOf="@id/txtSurat">
 
