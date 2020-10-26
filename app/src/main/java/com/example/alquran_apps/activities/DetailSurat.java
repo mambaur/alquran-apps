@@ -6,6 +6,7 @@ import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import android.annotation.SuppressLint;
+import android.app.ProgressDialog;
 import android.content.Intent;
 import android.media.MediaPlayer;
 import android.os.Bundle;
@@ -35,6 +36,7 @@ import com.example.alquran_apps.R;
 import com.example.alquran_apps.adapters.DetailSuratAdapter;
 import com.example.alquran_apps.models.AyatModel;
 import com.example.alquran_apps.util.Configuration;
+import com.example.alquran_apps.util.PgDialog;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -63,6 +65,7 @@ public class DetailSurat extends AppCompatActivity implements View.OnClickListen
 
     MediaPlayer mediaPlayer;
     Handler handler = new Handler();
+    private ProgressDialog progressDialog;
 
     @SuppressLint("ClickableViewAccessibility")
     @Override
@@ -84,6 +87,8 @@ public class DetailSurat extends AppCompatActivity implements View.OnClickListen
         btnClose = findViewById(R.id.btnClose);
         seekBar = findViewById(R.id.seekbar);
         btnTafsir = findViewById(R.id.btnTafsir);
+
+        progressDialog = new ProgressDialog(this);
 
         // Audio player
         mediaPlayer = new MediaPlayer();
@@ -195,6 +200,7 @@ public class DetailSurat extends AppCompatActivity implements View.OnClickListen
     }
 
     void getDetail(){
+        PgDialog.show(progressDialog);
         RequestQueue requestQueue = Volley.newRequestQueue(this);
         StringRequest stringRequest = new StringRequest(Request.Method.GET, Configuration.baseURLDetailSurat+nomorSurat+".json", new Response.Listener<String>() {
             @Override
@@ -228,6 +234,8 @@ public class DetailSurat extends AppCompatActivity implements View.OnClickListen
                     adapter = new DetailSuratAdapter(DetailSurat.this, listDetail);
                     recyclerView.setAdapter(adapter);
                     adapter.notifyDataSetChanged();
+
+                    PgDialog.hide(progressDialog);
                 } catch (JSONException e) {
                     e.printStackTrace();
                 }

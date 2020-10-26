@@ -34,7 +34,7 @@
                 android:text="Tafsir"
                 android:textSize="18dp"
                 android:textStyle="bold"
-                android:textColor="@color/colorPrimaryGrey"
+                android:textColor="@color/colorDark"
                 android:fontFamily="@font/roboto"
                 app:layout_constraintTop_toTopOf="parent"
                 app:layout_constraintBottom_toBottomOf="parent"

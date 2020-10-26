@@ -5,6 +5,7 @@ import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import android.annotation.SuppressLint;
+import android.app.ProgressDialog;
 import android.content.Context;
 import android.os.Bundle;
 import android.view.View;
@@ -20,6 +21,7 @@ import com.android.volley.toolbox.Volley;
 import com.example.alquran_apps.R;
 import com.example.alquran_apps.adapters.TafsirAdapter;
 import com.example.alquran_apps.util.Configuration;
+import com.example.alquran_apps.util.PgDialog;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -35,6 +37,8 @@ public class TafsirActivity extends AppCompatActivity {
     private LinearLayoutManager linearLayoutManager;
     private String nomorSurat = "";
 
+    private ProgressDialog progressDialog;
+
     // Interface
     private TextView txtSource, txtSubTitle;
     private ImageView btnBack;
@@ -49,6 +53,8 @@ public class TafsirActivity extends AppCompatActivity {
         txtSubTitle = findViewById(R.id.txtSubTitle);
         btnBack = findViewById(R.id.btnBack);
 
+        progressDialog = new ProgressDialog(this);
+
         txtSubTitle.setText("Tafsir "+getIntent().getStringExtra(Configuration.NAMA_SURAT));
         nomorSurat = getIntent().getStringExtra(Configuration.NOMOR_SURAT);
         getData(this);
@@ -62,6 +68,7 @@ public class TafsirActivity extends AppCompatActivity {
     }
 
     private void getData(Context context){
+        PgDialog.show(progressDialog);
         RequestQueue requestQueue = Volley.newRequestQueue(context);
         JsonObjectRequest jsonObjectRequest = new JsonObjectRequest(Request.Method.GET, Configuration.baseURLDetailSurat + nomorSurat + ".json", new Response.Listener<JSONObject>() {
             @SuppressLint("SetTextI18n")
@@ -90,6 +97,8 @@ public class TafsirActivity extends AppCompatActivity {
                     tafsirAdapter = new TafsirAdapter(TafsirActivity.this, listData);
                     recyclerView.setAdapter(tafsirAdapter);
                     tafsirAdapter.notifyDataSetChanged();
+
+                    PgDialog.hide(progressDialog);
                 } catch (JSONException e) {
                     e.printStackTrace();
                 }

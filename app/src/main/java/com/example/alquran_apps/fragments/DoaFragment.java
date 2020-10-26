@@ -1,5 +1,6 @@
 package com.example.alquran_apps.fragments;
 
+import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
@@ -11,6 +12,7 @@ import androidx.recyclerview.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import com.android.volley.Request;
@@ -24,6 +26,7 @@ import com.example.alquran_apps.activities.DoaActivity;
 import com.example.alquran_apps.adapters.DoaAdapter;
 import com.example.alquran_apps.models.DoaModel;
 import com.example.alquran_apps.util.Configuration;
+import com.example.alquran_apps.util.PgDialog;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -38,7 +41,9 @@ public class DoaFragment extends Fragment {
     private DoaAdapter doaAdapter;
     private DoaModel doaModel;
     private List<DoaModel> listDoa;
-    private TextView txtSelengkapnya;
+    private LinearLayout txtSelengkapnya;
+
+    private ProgressDialog progressDialog;
 
     public DoaFragment() {
         // Required empty public constructor
@@ -54,6 +59,8 @@ public class DoaFragment extends Fragment {
         recyclerView = view.findViewById(R.id.rvDoa);
         txtSelengkapnya = view.findViewById(R.id.txtSelengkapnya);
 
+        progressDialog = new ProgressDialog(view.getContext());
+
 
         getDoa(view.getContext());
         txtSelengkapnya.setOnClickListener(new View.OnClickListener() {
@@ -67,6 +74,7 @@ public class DoaFragment extends Fragment {
     }
 
     private void getDoa(final Context context){
+        PgDialog.show(progressDialog);
         RequestQueue requestQueue = Volley.newRequestQueue(context);
         StringRequest stringRequest = new StringRequest(Request.Method.GET, Configuration.baseURLDoa, new Response.Listener<String>() {
             @Override
@@ -91,6 +99,8 @@ public class DoaFragment extends Fragment {
                     doaAdapter = new DoaAdapter(context, listDoa);
                     recyclerView.setAdapter(doaAdapter);
                     doaAdapter.notifyDataSetChanged();
+
+                    PgDialog.hide(progressDialog);
                 } catch (JSONException e) {
                     e.printStackTrace();
                 }

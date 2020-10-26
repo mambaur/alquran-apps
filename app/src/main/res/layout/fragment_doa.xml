@@ -39,14 +39,14 @@
         </LinearLayout>
 
         <LinearLayout
+            android:id="@+id/txtSelengkapnya"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:orientation="horizontal"
-            android:layout_marginRight="15dp"
+            android:paddingRight="15dp"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintBottom_toBottomOf="@id/linearTitleDoa">
             <TextView
-                android:id="@+id/txtSelengkapnya"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="Lihat"

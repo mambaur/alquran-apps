@@ -3,6 +3,8 @@ package com.example.alquran_apps.activities;
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.appcompat.view.menu.MenuBuilder;
+import androidx.appcompat.view.menu.MenuPopupHelper;
 import androidx.core.app.ActivityCompat;
 import androidx.core.content.ContextCompat;
 import androidx.core.widget.NestedScrollView;
@@ -13,6 +15,7 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import android.Manifest;
 import android.annotation.SuppressLint;
+import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
@@ -49,6 +52,7 @@ import com.android.volley.TimeoutError;
 import com.android.volley.VolleyError;
 import com.android.volley.toolbox.StringRequest;
 import com.android.volley.toolbox.Volley;
+import com.example.alquran_apps.BuildConfig;
 import com.example.alquran_apps.R;
 import com.example.alquran_apps.adapters.JadwalAdapter;
 import com.example.alquran_apps.adapters.SuratAdapter;
@@ -56,6 +60,7 @@ import com.example.alquran_apps.fragments.DoaFragment;
 import com.example.alquran_apps.models.JadwalModel;
 import com.example.alquran_apps.models.SuratModel;
 import com.example.alquran_apps.util.Configuration;
+import com.example.alquran_apps.util.PgDialog;
 import com.google.android.material.navigation.NavigationView;
 
 import org.json.JSONArray;
@@ -85,6 +90,8 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     private Boolean isScrolling = true;
     private int currentItems, totalItems, scrollOutItems;
     private int loadData = 0;
+
+    private ProgressDialog progressDialog;
 
     // Interface
     private ImageButton btnMenu;
@@ -120,6 +127,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         nav = findViewById(R.id.nav_view);
 
         listSurat = new ArrayList<>();
+        progressDialog = new ProgressDialog(this);
 
         // Get date month now
         getMonth();
@@ -244,14 +252,8 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         }
     }
 
-    @Override
-    protected void onResume() {
-        super.onResume();
-//        getJadwal();
-//        getSurat();
-    }
-
     void getJadwal(){
+        PgDialog.show(progressDialog);
         RequestQueue requestQueue = Volley.newRequestQueue(this);
         StringRequest stringRequest = new StringRequest(Request.Method.GET, Configuration.baseURLJadwal + cityEndpoint + getURLJadwal+".json",
                 new Response.Listener<String>() {
@@ -338,6 +340,8 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                                 adapterSurat = new SuratAdapter(MainActivity.this, listSurat);
                                 recyclerViewSurat.setAdapter(adapterSurat);
                                 adapterSurat.notifyDataSetChanged();
+
+                                PgDialog.hide(progressDialog);
                             }
                         } catch (JSONException e) {
                             e.printStackTrace();
@@ -364,6 +368,20 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         requestQueue.add(stringRequest);
     }
 
+    private void shareApps(){
+        try {
+            Intent shareIntent = new Intent(Intent.ACTION_SEND);
+            shareIntent.setType("text/plain");
+            String shareMessage = "\nCobain aplikasi ini, keren banget bro!\n\n";
+            shareMessage = shareMessage + "https://play.google.com/store/apps/details?id=" + BuildConfig.APPLICATION_ID +"\n\n";
+            shareIntent.putExtra(Intent.EXTRA_SUBJECT, "Alquran");
+            shareIntent.putExtra(Intent.EXTRA_TEXT, shareMessage);
+            startActivity(Intent.createChooser(shareIntent, "Pilih salah satu"));
+        }catch (Exception e){
+            e.printStackTrace();
+        }
+    }
+
     @Override
     public void onClick(View v) {
         if (v.getId() == R.id.btnMenu) {
@@ -377,9 +395,8 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                             getJadwal();
                             getSurat();
                             break;
-                        case R.id.detail:
-                            Intent intent = new Intent(MainActivity.this, DetailSurat.class);
-                            startActivity(intent);
+                        case R.id.share:
+                            shareApps();
                             break;
                     }
                     return true;
@@ -413,7 +430,11 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                 startActivity(intentMap);
                 break;
             case R.id.menu3:
-                Toast.makeText(this, "Menu Tentang", Toast.LENGTH_SHORT).show();
+                Toast.makeText(this, "Beri rating apps", Toast.LENGTH_SHORT).show();
+                break;
+            case R.id.menu4:
+                Intent intentWeb = new Intent(MainActivity.this, WebViewActivity.class);
+                startActivity(intentWeb);
                 break;
         }
         DrawerLayout drawer = findViewById(R.id.drawer_layout);
@@ -433,7 +454,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
             txtLocation.setText(kota);
 
             cityEndpoint = kota.replaceAll("\\s+", "").toLowerCase();
-            getJadwal();
+//            getJadwal();
         } catch (IOException e) {
             e.printStackTrace();
         }

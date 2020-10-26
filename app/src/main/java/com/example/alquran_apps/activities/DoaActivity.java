@@ -4,6 +4,7 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
+import android.app.ProgressDialog;
 import android.content.Context;
 import android.os.Bundle;
 import android.view.View;
@@ -26,6 +27,7 @@ import com.example.alquran_apps.R;
 import com.example.alquran_apps.adapters.ListDoaAdapter;
 import com.example.alquran_apps.models.DoaModel;
 import com.example.alquran_apps.util.Configuration;
+import com.example.alquran_apps.util.PgDialog;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -40,6 +42,7 @@ public class DoaActivity extends AppCompatActivity {
     private ListDoaAdapter adapter;
     private List<DoaModel> listData;
     private DoaModel doaModel;
+    private ProgressDialog progressDialog;
 
     // Interface
     private ImageView imgBack;
@@ -51,6 +54,9 @@ public class DoaActivity extends AppCompatActivity {
 
         imgBack = findViewById(R.id.btnBack);
         recyclerView = findViewById(R.id.rvDoa);
+
+        progressDialog = new ProgressDialog(this);
+
         getData(this);
 
         imgBack.setOnClickListener(new View.OnClickListener() {
@@ -62,6 +68,7 @@ public class DoaActivity extends AppCompatActivity {
     }
 
     private void getData(final Context context){
+        PgDialog.show(progressDialog);
         RequestQueue requestQueue = Volley.newRequestQueue(context);
         JsonObjectRequest jsonObjectRequest = new JsonObjectRequest(Request.Method.GET, Configuration.baseURLDoa, new Response.Listener<JSONObject>() {
             @Override
@@ -88,6 +95,7 @@ public class DoaActivity extends AppCompatActivity {
                     adapter = new ListDoaAdapter(context, listData);
                     recyclerView.setAdapter(adapter);
                     adapter.notifyDataSetChanged();
+                    PgDialog.hide(progressDialog);
                 } catch (JSONException e) {
                     e.printStackTrace();
                 }

@@ -7,6 +7,7 @@ public class Configuration {
     public static final String baseURLDetailSurat = "https://raw.githubusercontent.com/penggguna/QuranJSON/master/surah/";
     public static final String baseURLDoa = "https://alquran-93bec.web.app/doa/listdoa.json";
     public static final String baseURLDetailDoa = "https://alquran-93bec.web.app/doa/byId/";
+    public static final String webViewURL = "https://caraguna.com";
 
     // Intent
     public static final String NOMOR_SURAT = "no_surat";
