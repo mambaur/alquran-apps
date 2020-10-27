@@ -16,12 +16,12 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent">
 
-        <ImageView
-            android:id="@+id/imgSplash"
-            android:layout_width="100dp"
-            android:layout_height="100dp"
-            android:layout_gravity="center_horizontal"
-            android:src="@drawable/al_qur_an" />
+<!--        <ImageView-->
+<!--            android:id="@+id/imgSplash"-->
+<!--            android:layout_width="100dp"-->
+<!--            android:layout_height="100dp"-->
+<!--            android:layout_gravity="center_horizontal"-->
+<!--            android:src="@drawable/al_qur_an" />-->
 
         <TextView
             android:id="@+id/txtSplash"
@@ -30,7 +30,6 @@
             android:fontFamily="@font/roboto"
             android:textStyle="bold"
             android:textSize="20dp"
-            android:layout_marginTop="10dp"
             android:textColor="@color/colorDark"
             android:text="Alqur-an Apps" />
 

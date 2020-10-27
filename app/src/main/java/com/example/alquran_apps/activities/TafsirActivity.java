@@ -11,10 +11,17 @@ import android.os.Bundle;
 import android.view.View;
 import android.widget.ImageView;
 import android.widget.TextView;
+import android.widget.Toast;
 
+import com.android.volley.AuthFailureError;
+import com.android.volley.NetworkError;
+import com.android.volley.NoConnectionError;
+import com.android.volley.ParseError;
 import com.android.volley.Request;
 import com.android.volley.RequestQueue;
 import com.android.volley.Response;
+import com.android.volley.ServerError;
+import com.android.volley.TimeoutError;
 import com.android.volley.VolleyError;
 import com.android.volley.toolbox.JsonObjectRequest;
 import com.android.volley.toolbox.Volley;
@@ -100,13 +107,27 @@ public class TafsirActivity extends AppCompatActivity {
 
                     PgDialog.hide(progressDialog);
                 } catch (JSONException e) {
+                    PgDialog.hide(progressDialog);
                     e.printStackTrace();
                 }
             }
         }, new Response.ErrorListener() {
             @Override
             public void onErrorResponse(VolleyError error) {
-
+                PgDialog.hide(progressDialog);
+                if (error instanceof NetworkError){
+                    Toast.makeText(TafsirActivity.this, Configuration.VOLLEY_ERROR_CONNECTION, Toast.LENGTH_SHORT).show();
+                }else if(error instanceof ServerError){
+                    Toast.makeText(TafsirActivity.this, Configuration.VOLLEY_SERVER_ERROR, Toast.LENGTH_SHORT).show();
+                }else if(error instanceof AuthFailureError){
+                    Toast.makeText(TafsirActivity.this, Configuration.VOLLEY_AUTH_ERROR, Toast.LENGTH_SHORT).show();
+                }else if(error instanceof ParseError){
+                    Toast.makeText(TafsirActivity.this, Configuration.VOLLEY_PARSE_ERROR, Toast.LENGTH_SHORT).show();
+                }else if(error instanceof NoConnectionError){
+                    Toast.makeText(TafsirActivity.this, Configuration.VOLLEY_NO_INTERNET, Toast.LENGTH_SHORT).show();
+                }else if (error instanceof TimeoutError){
+                    Toast.makeText(TafsirActivity.this, Configuration.VOLLEY_TIME_OUT, Toast.LENGTH_SHORT).show();
+                }
             }
         });
         requestQueue.add(jsonObjectRequest);

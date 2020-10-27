@@ -26,7 +26,7 @@
                 android:textColor="@color/colorPrimaryGrey"
                 android:fontFamily="@font/roboto"
                 android:textStyle="bold"
-                android:text="Doa harian"
+                android:text="Doa Harian"
                 android:textSize="18dp" />
             <TextView
                 android:layout_width="match_parent"
@@ -49,7 +49,7 @@
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="Lihat"
+                android:text="Lihat Semua"
                 android:layout_marginBottom="5dp"
                 android:textColor="@color/colorPrimary"
                 android:textStyle="bold"

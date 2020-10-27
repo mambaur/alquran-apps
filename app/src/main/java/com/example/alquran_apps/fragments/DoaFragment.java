@@ -27,6 +27,8 @@ import com.example.alquran_apps.adapters.DoaAdapter;
 import com.example.alquran_apps.models.DoaModel;
 import com.example.alquran_apps.util.Configuration;
 import com.example.alquran_apps.util.PgDialog;
+import com.google.android.gms.ads.AdRequest;
+import com.google.android.gms.ads.InterstitialAd;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -42,6 +44,8 @@ public class DoaFragment extends Fragment {
     private DoaModel doaModel;
     private List<DoaModel> listDoa;
     private LinearLayout txtSelengkapnya;
+
+    private InterstitialAd interstitialAd;
 
     private ProgressDialog progressDialog;
 
@@ -61,6 +65,10 @@ public class DoaFragment extends Fragment {
 
         progressDialog = new ProgressDialog(view.getContext());
 
+        // Admob
+        interstitialAd = new InterstitialAd(view.getContext());
+        interstitialAd.setAdUnitId("ca-app-pub-2465007971338713/8995335849");
+        interstitialAd.loadAd(new AdRequest.Builder().build());
 
         getDoa(view.getContext());
         txtSelengkapnya.setOnClickListener(new View.OnClickListener() {
@@ -96,7 +104,7 @@ public class DoaFragment extends Fragment {
                     linearLayoutManager = new LinearLayoutManager(context, LinearLayoutManager.HORIZONTAL, false);
                     recyclerView.setLayoutManager(linearLayoutManager);
 
-                    doaAdapter = new DoaAdapter(context, listDoa);
+                    doaAdapter = new DoaAdapter(context, listDoa, interstitialAd);
                     recyclerView.setAdapter(doaAdapter);
                     doaAdapter.notifyDataSetChanged();
 

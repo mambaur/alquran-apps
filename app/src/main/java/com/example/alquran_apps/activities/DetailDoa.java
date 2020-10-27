@@ -6,6 +6,7 @@ import android.app.ProgressDialog;
 import android.content.Context;
 import android.os.Bundle;
 import android.text.Html;
+import android.text.Spanned;
 import android.view.View;
 import android.widget.Button;
 import android.widget.ImageView;
@@ -24,6 +25,7 @@ import com.android.volley.TimeoutError;
 import com.android.volley.VolleyError;
 import com.android.volley.toolbox.StringRequest;
 import com.android.volley.toolbox.Volley;
+import com.bumptech.glide.Glide;
 import com.example.alquran_apps.R;
 import com.example.alquran_apps.util.Configuration;
 import com.example.alquran_apps.util.PgDialog;
@@ -33,9 +35,9 @@ import org.json.JSONObject;
 
 public class DetailDoa extends AppCompatActivity {
 
-    private TextView txtDoa, txtTranslation, txtTitleBar;
+    private TextView txtDoa, txtTranslation, txtTitleBar, txtKeterangan;
     private String idDoa = "";
-    private ImageView btnBack;
+    private ImageView btnBack, imgDoa;
     private Button btnStart;
 
     private ProgressDialog progressDialog;
@@ -48,6 +50,8 @@ public class DetailDoa extends AppCompatActivity {
         txtDoa = findViewById(R.id.txtDoa);
         txtTranslation = findViewById(R.id.txtDoaTranslation);
         txtTitleBar = findViewById(R.id.txtTitlebar);
+        txtKeterangan = findViewById(R.id.keterangan);
+        imgDoa = findViewById(R.id.imgDoa);
         btnBack = findViewById(R.id.btnBack);
         btnStart = findViewById(R.id.btnStart);
 
@@ -81,31 +85,36 @@ public class DetailDoa extends AppCompatActivity {
                 try {
                     JSONObject jsonObject = new JSONObject(response);
                     JSONObject data = jsonObject.getJSONObject("result");
-                    txtDoa.setText(Html.fromHtml(data.getString("text_ar")));
+                    txtDoa.setText(data.getString("text_ar"));
                     txtTranslation.setText(data.getString("translation"));
                     txtTitleBar.setText(data.getString("judul"));
+                    Glide.with(DetailDoa.this).load(data.getString("img")).into(imgDoa);
+
+                    Spanned htmlSpanned = Html.fromHtml(data.getString("keterangan"));
+                    txtKeterangan.setText(htmlSpanned);
                     PgDialog.hide(progressDialog);
                 } catch (JSONException e) {
+                    PgDialog.hide(progressDialog);
                     e.printStackTrace();
                 }
             }
         }, new Response.ErrorListener() {
             @Override
             public void onErrorResponse(VolleyError error) {
+                PgDialog.hide(progressDialog);
                 if (error instanceof NetworkError){
-                    Toast.makeText(DetailDoa.this, "Koneksi error bro!", Toast.LENGTH_SHORT).show();
+                    Toast.makeText(DetailDoa.this, Configuration.VOLLEY_ERROR_CONNECTION, Toast.LENGTH_SHORT).show();
                 }else if(error instanceof ServerError){
-                    Toast.makeText(DetailDoa.this, "Maaf bro, server sedang bermasalah!", Toast.LENGTH_SHORT).show();
+                    Toast.makeText(DetailDoa.this, Configuration.VOLLEY_SERVER_ERROR, Toast.LENGTH_SHORT).show();
                 }else if(error instanceof AuthFailureError){
-                    Toast.makeText(DetailDoa.this, "Maaf bro, API key kami sedang bermasalah!", Toast.LENGTH_SHORT).show();
+                    Toast.makeText(DetailDoa.this, Configuration.VOLLEY_AUTH_ERROR, Toast.LENGTH_SHORT).show();
                 }else if(error instanceof ParseError){
-                    Toast.makeText(DetailDoa.this, "Parsing data salah!", Toast.LENGTH_SHORT).show();
+                    Toast.makeText(DetailDoa.this, Configuration.VOLLEY_PARSE_ERROR, Toast.LENGTH_SHORT).show();
                 }else if(error instanceof NoConnectionError){
-                    Toast.makeText(DetailDoa.this, "Waduh, tidak ada koneksi internet bro!", Toast.LENGTH_SHORT).show();
+                    Toast.makeText(DetailDoa.this, Configuration.VOLLEY_NO_INTERNET, Toast.LENGTH_SHORT).show();
                 }else if (error instanceof TimeoutError){
-                    Toast.makeText(DetailDoa.this, "Kelamaan nunggu bro, muat ulang aja!", Toast.LENGTH_SHORT).show();
+                    Toast.makeText(DetailDoa.this, Configuration.VOLLEY_TIME_OUT, Toast.LENGTH_SHORT).show();
                 }
-
             }
         });
         requestQueue.add(stringRequest);

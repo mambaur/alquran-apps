@@ -3,8 +3,6 @@ package com.example.alquran_apps.activities;
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
-import androidx.appcompat.view.menu.MenuBuilder;
-import androidx.appcompat.view.menu.MenuPopupHelper;
 import androidx.core.app.ActivityCompat;
 import androidx.core.content.ContextCompat;
 import androidx.core.widget.NestedScrollView;
@@ -27,6 +25,7 @@ import android.location.LocationListener;
 import android.location.LocationManager;
 import android.os.Bundle;
 import android.provider.Settings;
+import android.util.Log;
 import android.view.Gravity;
 import android.view.MenuItem;
 import android.view.View;
@@ -61,6 +60,10 @@ import com.example.alquran_apps.models.JadwalModel;
 import com.example.alquran_apps.models.SuratModel;
 import com.example.alquran_apps.util.Configuration;
 import com.example.alquran_apps.util.PgDialog;
+import com.google.android.gms.ads.AdRequest;
+import com.google.android.gms.ads.AdView;
+import com.google.android.gms.ads.InterstitialAd;
+import com.google.android.gms.ads.MobileAds;
 import com.google.android.material.navigation.NavigationView;
 
 import org.json.JSONArray;
@@ -108,6 +111,10 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     // Location
     LocationManager locationManager;
 
+    // Admob
+    private AdView adView;
+//    private InterstitialAd interstitialAd;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -125,9 +132,21 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         ACtv = findViewById(R.id.ACtv);
         drawer = findViewById(R.id.drawer_layout);
         nav = findViewById(R.id.nav_view);
+        adView = findViewById(R.id.adView);
 
         listSurat = new ArrayList<>();
         progressDialog = new ProgressDialog(this);
+
+        // Load admob
+        MobileAds.initialize(this);
+        AdRequest adRequest = new AdRequest.Builder().build();
+        adView.loadAd(adRequest);
+
+//        interstitialAd = new InterstitialAd(this);
+//        interstitialAd.setAdUnitId("ca-app-pub-2465007971338713/8995335849");
+//        interstitialAd.loadAd(new AdRequest.Builder().build());
+
+//        ca-app-pub-2465007971338713/8995335849
 
         // Get date month now
         getMonth();
@@ -181,9 +200,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                         scrollOutItems = layoutManagerSurat.findFirstVisibleItemPosition();
                         if (isScrolling && (currentItems + scrollOutItems) >= totalItems) {
                             isScrolling = false;
-                            progressBar.setVisibility(View.VISIBLE);
                             getSurat();
-                            progressBar.setVisibility(View.GONE);
                             isScrolling = true;
                         }
                     }
@@ -283,30 +300,23 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                             adapterJadwal.notifyDataSetChanged();
                         } catch (JSONException e) {
                             e.printStackTrace();
+                            PgDialog.hide(progressDialog);
                         }
                     }
                 }, new Response.ErrorListener() {
             @Override
             public void onErrorResponse(VolleyError error) {
-                if (error instanceof NetworkError){
-                    Toast.makeText(MainActivity.this, "Koneksi error bro!", Toast.LENGTH_SHORT).show();
-                }else if(error instanceof ServerError){
-                    Toast.makeText(MainActivity.this, "Maaf bro, server sedang bermasalah!", Toast.LENGTH_SHORT).show();
-                }else if(error instanceof AuthFailureError){
-                    Toast.makeText(MainActivity.this, "Maaf bro, API key kami sedang bermasalah!", Toast.LENGTH_SHORT).show();
-                }else if(error instanceof ParseError){
-                    Toast.makeText(MainActivity.this, "Parsing data salah!", Toast.LENGTH_SHORT).show();
-                }else if(error instanceof NoConnectionError){
-                    Toast.makeText(MainActivity.this, "Waduh, tidak ada koneksi internet bro!", Toast.LENGTH_SHORT).show();
-                }else if (error instanceof TimeoutError){
-                    Toast.makeText(MainActivity.this, "Kelamaan nunggu bro, muat ulang aja!", Toast.LENGTH_SHORT).show();
-                }
+                PgDialog.hide(progressDialog);
+                errorVolley(error);
             }
         });
         requestQueue.add(stringRequest);
     }
 
     void getSurat(){
+        if (listSurat.size() <= 100){
+            progressBar.setVisibility(View.VISIBLE);
+        }
         RequestQueue requestQueue = Volley.newRequestQueue(this);
         StringRequest stringRequest = new StringRequest(Request.Method.GET, Configuration.baseURLSurat,
                 new Response.Listener<String>() {
@@ -341,31 +351,38 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                                 recyclerViewSurat.setAdapter(adapterSurat);
                                 adapterSurat.notifyDataSetChanged();
 
+                                progressBar.setVisibility(View.GONE);
                                 PgDialog.hide(progressDialog);
                             }
                         } catch (JSONException e) {
                             e.printStackTrace();
+                            PgDialog.hide(progressDialog);
                         }
                     }
                 }, new Response.ErrorListener() {
             @Override
             public void onErrorResponse(VolleyError error) {
-                if (error instanceof NetworkError){
-                    Toast.makeText(MainActivity.this, "Koneksi error bro!", Toast.LENGTH_SHORT).show();
-                }else if(error instanceof ServerError){
-                    Toast.makeText(MainActivity.this, "Maaf bro, server sedang bermasalah!", Toast.LENGTH_SHORT).show();
-                }else if(error instanceof AuthFailureError){
-                    Toast.makeText(MainActivity.this, "Maaf bro, API key kami sedang bermasalah!", Toast.LENGTH_SHORT).show();
-                }else if(error instanceof ParseError){
-                    Toast.makeText(MainActivity.this, "Parsing data salah!", Toast.LENGTH_SHORT).show();
-                }else if(error instanceof NoConnectionError){
-                    Toast.makeText(MainActivity.this, "Waduh, tidak ada koneksi internet bro!", Toast.LENGTH_SHORT).show();
-                }else if (error instanceof TimeoutError){
-                    Toast.makeText(MainActivity.this, "Kelamaan nunggu bro, muat ulang aja!", Toast.LENGTH_SHORT).show();
-                }
+                PgDialog.hide(progressDialog);
+                errorVolley(error);
             }
         });
         requestQueue.add(stringRequest);
+    }
+
+    private void errorVolley(VolleyError error){
+        if (error instanceof NetworkError){
+            Toast.makeText(MainActivity.this, Configuration.VOLLEY_ERROR_CONNECTION, Toast.LENGTH_SHORT).show();
+        }else if(error instanceof ServerError){
+            Toast.makeText(MainActivity.this, Configuration.VOLLEY_SERVER_ERROR, Toast.LENGTH_SHORT).show();
+        }else if(error instanceof AuthFailureError){
+            Toast.makeText(MainActivity.this, Configuration.VOLLEY_AUTH_ERROR, Toast.LENGTH_SHORT).show();
+        }else if(error instanceof ParseError){
+            Toast.makeText(MainActivity.this, Configuration.VOLLEY_PARSE_ERROR, Toast.LENGTH_SHORT).show();
+        }else if(error instanceof NoConnectionError){
+            Toast.makeText(MainActivity.this, Configuration.VOLLEY_NO_INTERNET, Toast.LENGTH_SHORT).show();
+        }else if (error instanceof TimeoutError){
+            Toast.makeText(MainActivity.this, Configuration.VOLLEY_TIME_OUT, Toast.LENGTH_SHORT).show();
+        }
     }
 
     private void shareApps(){
@@ -396,6 +413,11 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                             getSurat();
                             break;
                         case R.id.share:
+//                            if (interstitialAd.isLoaded()){
+//                                interstitialAd.show();
+//                            }else{
+//                                Log.d("Ad load", "Ads gagal load");
+//                            }
                             shareApps();
                             break;
                     }
@@ -436,6 +458,9 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                 Intent intentWeb = new Intent(MainActivity.this, WebViewActivity.class);
                 startActivity(intentWeb);
                 break;
+            case R.id.menu5:
+                Intent intentDonasi = new Intent(MainActivity.this, DonasiActivity.class);
+                startActivity(intentDonasi);
         }
         DrawerLayout drawer = findViewById(R.id.drawer_layout);
         drawer.closeDrawer(Gravity.LEFT);

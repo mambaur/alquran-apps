@@ -3,5 +3,6 @@
     <item android:id="@+id/menu1" android:icon="@drawable/ic_my_location" android:title="Kompas Kiblat"/>
     <item android:id="@+id/menu2" android:icon="@drawable/ic_place" android:title="Masjid Terdekat" />
     <item android:id="@+id/menu3" android:icon="@drawable/ic_star" android:title="Beri rating app" />
+    <item android:id="@+id/menu5" android:icon="@drawable/ic_favorite_border_black" android:title="Donasi untuk apk" />
     <item android:id="@+id/menu4" android:icon="@drawable/ic_help" android:title="Tentang" />
 </menu>

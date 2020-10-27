@@ -8,6 +8,7 @@ public class Configuration {
     public static final String baseURLDoa = "https://alquran-93bec.web.app/doa/listdoa.json";
     public static final String baseURLDetailDoa = "https://alquran-93bec.web.app/doa/byId/";
     public static final String webViewURL = "https://caraguna.com";
+    public static final String baseURLDonasi = "https://saweria.co/alquranapps";
 
     // Intent
     public static final String NOMOR_SURAT = "no_surat";
@@ -35,4 +36,12 @@ public class Configuration {
             "At Takaatsur - 102", "Al 'Ashr - 103", "Al Humazah - 104", "Al Fiil - 105", "Quraisy - 106", "Al Maa'uun - 107", "Al Kautsar - 108",
             "Al Kafirun - 109", "An Nashr - 110", "Al Lahab - 111", "Al Ikhlash - 112", "Al Falaq - 113", "An Naas - 114"
     };
+
+    // Error message volley
+    public static final String VOLLEY_ERROR_CONNECTION = "Koneksi kamu bermasalah sob!";
+    public static final String VOLLEY_SERVER_ERROR = "Sorry sob, server kami sedang bermasalah!";
+    public static final String VOLLEY_AUTH_ERROR = "Sorry sob, aplikasi sedang maintenance.";
+    public static final String VOLLEY_PARSE_ERROR = "Sorry sob, aplikasi masih dalam perbaikan.";
+    public static final String VOLLEY_NO_INTERNET = "Coba cek koneksi internet kamu sob!";
+    public static final String VOLLEY_TIME_OUT = "Koneksi internet kamu kayaknya agak lambat deh, coba muat ulang sob!";
 }

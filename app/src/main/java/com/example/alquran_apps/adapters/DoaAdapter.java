@@ -2,6 +2,7 @@ package com.example.alquran_apps.adapters;
 
 import android.content.Context;
 import android.content.Intent;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -17,6 +18,7 @@ import com.example.alquran_apps.R;
 import com.example.alquran_apps.activities.DetailDoa;
 import com.example.alquran_apps.models.DoaModel;
 import com.example.alquran_apps.util.Configuration;
+import com.google.android.gms.ads.InterstitialAd;
 
 import java.util.List;
 
@@ -24,11 +26,13 @@ public class DoaAdapter extends RecyclerView.Adapter<DoaAdapter.HolderData> {
     private List<DoaModel> listData;
     private LayoutInflater inflater;
     private Context context;
+    private InterstitialAd interstitialAd;
 
-    public DoaAdapter(Context context, List<DoaModel> listData) {
+    public DoaAdapter(Context context, List<DoaModel> listData, InterstitialAd interstitialAd) {
         this.listData = listData;
         this.inflater = LayoutInflater.from(context);
         this.context = context;
+        this.interstitialAd = interstitialAd;
     }
 
     @NonNull
@@ -48,6 +52,11 @@ public class DoaAdapter extends RecyclerView.Adapter<DoaAdapter.HolderData> {
         holder.cardView.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                if (interstitialAd.isLoaded()){
+                    interstitialAd.show();
+                }else{
+                    Log.d("Ad load", "Ads gagal load");
+                }
                 Intent intent = new Intent(context, DetailDoa.class);
                 intent.putExtra(Configuration.ID_DOA, id);
                 context.startActivity(intent);

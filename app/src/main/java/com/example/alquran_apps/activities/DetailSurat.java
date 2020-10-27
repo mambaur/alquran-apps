@@ -237,24 +237,26 @@ public class DetailSurat extends AppCompatActivity implements View.OnClickListen
 
                     PgDialog.hide(progressDialog);
                 } catch (JSONException e) {
+                    PgDialog.hide(progressDialog);
                     e.printStackTrace();
                 }
             }
         }, new Response.ErrorListener() {
             @Override
             public void onErrorResponse(VolleyError error) {
+                PgDialog.hide(progressDialog);
                 if (error instanceof NetworkError){
-                    Toast.makeText(DetailSurat.this, "Koneksi error bro!", Toast.LENGTH_SHORT).show();
+                    Toast.makeText(DetailSurat.this, Configuration.VOLLEY_ERROR_CONNECTION, Toast.LENGTH_SHORT).show();
                 }else if(error instanceof ServerError){
-                    Toast.makeText(DetailSurat.this, "Maaf bro, server sedang bermasalah!", Toast.LENGTH_SHORT).show();
+                    Toast.makeText(DetailSurat.this, Configuration.VOLLEY_SERVER_ERROR, Toast.LENGTH_SHORT).show();
                 }else if(error instanceof AuthFailureError){
-                    Toast.makeText(DetailSurat.this, "Maaf bro, API key kami sedang bermasalah!", Toast.LENGTH_SHORT).show();
+                    Toast.makeText(DetailSurat.this, Configuration.VOLLEY_AUTH_ERROR, Toast.LENGTH_SHORT).show();
                 }else if(error instanceof ParseError){
-                    Toast.makeText(DetailSurat.this, "Parsing data salah!", Toast.LENGTH_SHORT).show();
+                    Toast.makeText(DetailSurat.this, Configuration.VOLLEY_PARSE_ERROR, Toast.LENGTH_SHORT).show();
                 }else if(error instanceof NoConnectionError){
-                    Toast.makeText(DetailSurat.this, "Waduh, tidak ada koneksi internet bro!", Toast.LENGTH_SHORT).show();
+                    Toast.makeText(DetailSurat.this, Configuration.VOLLEY_NO_INTERNET, Toast.LENGTH_SHORT).show();
                 }else if (error instanceof TimeoutError){
-                    Toast.makeText(DetailSurat.this, "Kelamaan nunggu bro, muat ulang aja!", Toast.LENGTH_SHORT).show();
+                    Toast.makeText(DetailSurat.this, Configuration.VOLLEY_TIME_OUT, Toast.LENGTH_SHORT).show();
                 }
             }
         });

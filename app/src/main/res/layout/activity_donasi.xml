@@ -1,17 +1,16 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout
-    xmlns:android="http://schemas.android.com/apk/res/android"
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="vertical"
-    tools:context=".activities.TafsirActivity">
+    tools:context="com.example.alquran_apps.activities.DonasiActivity">
     <androidx.appcompat.widget.Toolbar
-        android:id="@+id/toolBar"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:background="@color/colorWhite">
+        android:background="@color/colorWhite"
+        android:elevation="3dp">
         <androidx.constraintlayout.widget.ConstraintLayout
             android:layout_width="match_parent"
             android:layout_height="match_parent">
@@ -26,46 +25,38 @@
                 app:layout_constraintStart_toStartOf="parent"/>
 
             <TextView
-                android:id="@+id/txtSubTitle"
+                android:id="@+id/txtTitlebar"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginLeft="20dp"
-                android:text="Tafsir"
+                android:text="Donasi untuk aplikasi"
                 android:textSize="18dp"
-                android:textStyle="bold"
                 android:textColor="@color/colorDark"
                 android:fontFamily="@font/roboto"
+                android:textStyle="bold"
                 app:layout_constraintTop_toTopOf="parent"
                 app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintStart_toEndOf="@+id/btnBack"/>
+
+            <ImageView
+                android:id="@+id/btnLink"
+                android:layout_width="30dp"
+                android:layout_height="30dp"
+                android:layout_marginRight="15dp"
+                android:src="@drawable/ic_link_black"
+                app:layout_constraintTop_toTopOf="parent"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintBottom_toBottomOf="parent"/>
         </androidx.constraintlayout.widget.ConstraintLayout>
     </androidx.appcompat.widget.Toolbar>
 
-    <TextView
-        android:id="@+id/txtSource"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:text="Loading..."
-        android:elevation="3dp"
-        android:paddingHorizontal="15dp"
-        android:paddingVertical="5dp"
-        android:textStyle="bold"
-        android:fontFamily="@font/roboto"
-        android:background="@color/colorSuccess"
-        android:textColor="@color/colorWhite"/>
-
     <LinearLayout
-        android:id="@+id/linearList"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:orientation="vertical"
-        app:layout_constraintTop_toBottomOf="@+id/txtSource">
-        <androidx.recyclerview.widget.RecyclerView
-            android:id="@+id/rvDoa"
-            android:paddingTop="5dp"
-            android:clipToPadding="false"
+        android:layout_height="match_parent"
+        android:orientation="vertical">
+        <WebView
+            android:id="@+id/webView"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"/>
+            android:layout_height="match_parent"/>
     </LinearLayout>
-
 </LinearLayout>

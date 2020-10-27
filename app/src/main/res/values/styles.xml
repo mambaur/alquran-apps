@@ -5,7 +5,7 @@
         <!-- Customize your theme here. -->
 <!--        <item name="colorPrimary">@color/colorPrimary</item>-->
         <item name="colorPrimaryDark">@color/colorLightGreen</item>
-        <item name="colorAccent">@color/colorWhite</item>
+        <item name="colorAccent">@color/lushGreen1</item>
     </style>
 
     <style name="DefaultTheme" parent="Theme.AppCompat.Light.DarkActionBar">
@@ -26,7 +26,7 @@
         <!-- Customize your theme here. -->
         <item name="colorPrimary">@color/colorLightGreen2</item>
         <item name="colorPrimaryDark">@color/colorLightGreen2</item>
-        <item name="colorAccent">@color/colorWhite</item>
+        <item name="colorAccent">@color/colorGrey</item>
         <item name="android:actionMenuTextColor">@color/colorGreen</item>
     </style>
 
