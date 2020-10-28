@@ -1,12 +1,16 @@
 package com.example.alquran_apps.activities;
 
+import androidx.annotation.RequiresApi;
 import androidx.appcompat.app.AppCompatActivity;
 
 import android.app.ProgressDialog;
 import android.content.Context;
+import android.net.Uri;
+import android.os.Build;
 import android.os.Bundle;
 import android.text.Html;
 import android.text.Spanned;
+import android.util.Base64;
 import android.view.View;
 import android.widget.Button;
 import android.widget.ImageView;
@@ -23,6 +27,7 @@ import com.android.volley.Response;
 import com.android.volley.ServerError;
 import com.android.volley.TimeoutError;
 import com.android.volley.VolleyError;
+import com.android.volley.toolbox.JsonObjectRequest;
 import com.android.volley.toolbox.StringRequest;
 import com.android.volley.toolbox.Volley;
 import com.bumptech.glide.Glide;
@@ -34,12 +39,17 @@ import com.example.alquran_apps.util.PgDialog;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import java.io.UnsupportedEncodingException;
+import java.net.URLDecoder;
+import java.net.URLEncoder;
+import java.nio.charset.Charset;
+import java.nio.charset.StandardCharsets;
+
 public class DetailDoa extends AppCompatActivity {
 
     private TextView txtDoa, txtTranslation, txtTitleBar, txtKeterangan;
     private String idDoa = "";
     private ImageView btnBack, imgDoa;
-    private Button btnStart;
 
     private ProgressDialog progressDialog;
 
@@ -54,7 +64,6 @@ public class DetailDoa extends AppCompatActivity {
         txtKeterangan = findViewById(R.id.keterangan);
         imgDoa = findViewById(R.id.imgDoa);
         btnBack = findViewById(R.id.btnBack);
-        btnStart = findViewById(R.id.btnStart);
 
         progressDialog = new ProgressDialog(this);
 
@@ -67,26 +76,19 @@ public class DetailDoa extends AppCompatActivity {
                 finish();
             }
         });
-
-        btnStart.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-//                showProgressDialog(DetailDoa.this);
-                PgDialog.show(progressDialog);
-            }
-        });
     }
 
     private void getDetail(){
         PgDialog.show(progressDialog);
         RequestQueue requestQueue = Volley.newRequestQueue(this);
-        StringRequest stringRequest = new StringRequest(Request.Method.GET, Configuration.baseURLDetailDoa+idDoa+".json", new Response.Listener<String>() {
+        JsonObjectRequest stringRequest = new JsonObjectRequest(Request.Method.GET, Configuration.baseURLDetailDoa+idDoa+".json", new Response.Listener<JSONObject>() {
             @Override
-            public void onResponse(String response) {
+            public void onResponse(JSONObject response) {
                 try {
-                    JSONObject jsonObject = new JSONObject(response);
-                    JSONObject data = jsonObject.getJSONObject("result");
-                    txtDoa.setText(data.getString("text_ar"));
+                    JSONObject data = response.getJSONObject("result");
+
+                    String text_arab = data.getString("text_ar");
+                    txtDoa.setText(text_arab);
 
                     Spanned translationSpanned = Html.fromHtml(data.getString("translation"));
                     txtTranslation.setText(translationSpanned);

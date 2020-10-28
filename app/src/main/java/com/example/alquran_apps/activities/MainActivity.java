@@ -453,7 +453,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                 startActivity(intentMap);
                 break;
             case R.id.menu3:
-                Intent intentRating = new Intent(Intent.ACTION_VIEW, Uri.parse("https://google.com"));
+                Intent intentRating = new Intent(Intent.ACTION_VIEW, Uri.parse(Configuration.baseURLRating));
                 startActivity(intentRating);
                 break;
             case R.id.menu4:
@@ -470,6 +470,10 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                 break;
             case R.id.menu7:
                 alertVersion();
+                break;
+            case R.id.menu8:
+                Intent intentDoa = new Intent(MainActivity.this, DoaActivity.class);
+                startActivity(intentDoa);
                 break;
         }
         DrawerLayout drawer = findViewById(R.id.drawer_layout);

@@ -4,6 +4,7 @@
         <item android:id="@+id/menu1" android:icon="@drawable/ic_my_location" android:title="Kompas Kiblat"/>
         <item android:id="@+id/menu2" android:icon="@drawable/ic_place" android:title="Masjid Terdekat" />
         <item android:id="@+id/menu6" android:icon="@drawable/ic_public_black_24dp" android:title="Informasi Covid-19"/>
+        <item android:id="@+id/menu8" android:icon="@drawable/ic_widgets_black_24dp" android:title="Doa Harian"/>
     </group>
 
     <group android:id="@+id/supportApp">
