@@ -264,15 +264,15 @@
                     app:layout_constraintTop_toBottomOf="@+id/listSholat"/>
 
                     <com.google.android.gms.ads.AdView
-                    android:id="@+id/adView"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:paddingTop="16dp"
-                    app:adSize="BANNER"
-                    app:adUnitId="ca-app-pub-2465007971338713/6800934267"
-                    app:layout_constraintTop_toBottomOf="@id/doaContainer"
-                    app:layout_constraintStart_toStartOf="parent"
-                    app:layout_constraintEnd_toEndOf="parent"/>
+                        android:id="@+id/adView"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="10dp"
+                        app:adSize="BANNER"
+                        app:adUnitId="ca-app-pub-2465007971338713/6800934267"
+                        app:layout_constraintTop_toBottomOf="@id/doaContainer"
+                        app:layout_constraintStart_toStartOf="parent"
+                        app:layout_constraintEnd_toEndOf="parent"/>
 
                     <TextView
                     android:id="@+id/txtJudulSurat"

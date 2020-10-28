@@ -7,6 +7,7 @@
     <color name="colorDark">#353535</color>
     <color name="colorLight">#f7f7f7</color>
     <color name="colorWhite">#FFFFFF</color>
+    <color name="colorDanger">#d92b2c</color>
 
 <!--    Main Color-->
     <color name="colorGreen5">#2eb62c</color>

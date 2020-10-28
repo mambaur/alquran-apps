@@ -1,0 +1,40 @@
+{
+  "project_info": {
+    "project_number": "960000324023",
+    "firebase_url": "https://alquran-93bec.firebaseio.com",
+    "project_id": "alquran-93bec",
+    "storage_bucket": "alquran-93bec.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:960000324023:android:b8fc17f1e89803887fb832",
+        "android_client_info": {
+          "package_name": "com.caraguna.alquran_apps"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "960000324023-d60lkeg1sl6fbq6jbfmht5r3tu6videq.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyAyB6UmdTCtFWUrT-McFDVU9kmhFv5VeDs"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "960000324023-d60lkeg1sl6fbq6jbfmht5r3tu6videq.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

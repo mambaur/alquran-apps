@@ -9,6 +9,7 @@ public class Configuration {
     public static final String baseURLDetailDoa = "https://alquran-93bec.web.app/doa/byId/";
     public static final String webViewURL = "https://caraguna.com";
     public static final String baseURLDonasi = "https://saweria.co/alquranapps";
+    public static final String baseURLCovid = "https://data.covid19.go.id/public/api/update.json";
 
     // Intent
     public static final String NOMOR_SURAT = "no_surat";

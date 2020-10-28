@@ -9,6 +9,7 @@ import androidx.core.widget.NestedScrollView;
 import androidx.drawerlayout.widget.DrawerLayout;
 import androidx.fragment.app.FragmentManager;
 import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.recyclerview.widget.LinearSmoothScroller;
 import androidx.recyclerview.widget.RecyclerView;
 
 import android.Manifest;
@@ -23,6 +24,7 @@ import android.location.Geocoder;
 import android.location.Location;
 import android.location.LocationListener;
 import android.location.LocationManager;
+import android.net.Uri;
 import android.os.Bundle;
 import android.provider.Settings;
 import android.util.Log;
@@ -58,6 +60,7 @@ import com.example.alquran_apps.adapters.SuratAdapter;
 import com.example.alquran_apps.fragments.DoaFragment;
 import com.example.alquran_apps.models.JadwalModel;
 import com.example.alquran_apps.models.SuratModel;
+import com.example.alquran_apps.util.Common;
 import com.example.alquran_apps.util.Configuration;
 import com.example.alquran_apps.util.PgDialog;
 import com.google.android.gms.ads.AdRequest;
@@ -83,6 +86,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
 
     private String getURLJadwal = "/2020/10";
     private String cityEndpoint = "jakartautara";
+    private String day = "1";
     private List<JadwalModel> sholat;
     private List<SuratModel> listSurat;
     private RecyclerView recyclerViewJadwal, recyclerViewSurat;
@@ -93,6 +97,8 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     private Boolean isScrolling = true;
     private int currentItems, totalItems, scrollOutItems;
     private int loadData = 0;
+    private boolean isGetJadwalLoaded = true;
+    private boolean isGetSuratLoaded = true;
 
     private ProgressDialog progressDialog;
 
@@ -216,6 +222,9 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         Date date = new Date();
         DateFormat dateFormat = new SimpleDateFormat("MMMM", Locale.getDefault());
         DateFormat urlMonth = new SimpleDateFormat("/yyyy/MM");
+        DateFormat dayFormat = new SimpleDateFormat("dd");
+
+        day = dayFormat.format(date);
         getURLJadwal = urlMonth.format(date);
         String month = dateFormat.format(date);
         txtBulan.setText(month);
@@ -293,11 +302,17 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
 
                             // Jadwal Sholat Recyclerview
                             layoutManagerJadwal = new LinearLayoutManager(MainActivity.this, LinearLayoutManager.HORIZONTAL, false);
+//                            layoutManagerJadwal.scrollToPositionWithOffset(3, 1);
                             recyclerViewJadwal.setLayoutManager(layoutManagerJadwal);
+
+                            recyclerViewJadwal.getLayoutManager().scrollToPosition(Integer.parseInt(day) - 1);
 
                             adapterJadwal = new JadwalAdapter(MainActivity.this, sholat);
                             recyclerViewJadwal.setAdapter(adapterJadwal);
                             adapterJadwal.notifyDataSetChanged();
+                            if (!isGetSuratLoaded){
+                                PgDialog.hide(progressDialog);
+                            }
                         } catch (JSONException e) {
                             e.printStackTrace();
                             PgDialog.hide(progressDialog);
@@ -307,16 +322,17 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
             @Override
             public void onErrorResponse(VolleyError error) {
                 PgDialog.hide(progressDialog);
-                errorVolley(error);
+                Common.volleyErrorHandle(MainActivity.this, error);
             }
         });
         requestQueue.add(stringRequest);
     }
 
     void getSurat(){
-        if (listSurat.size() <= 100){
+        if (listSurat.size() <= 110 && listSurat.size() >= 10){
             progressBar.setVisibility(View.VISIBLE);
         }
+        isGetSuratLoaded = false;
         RequestQueue requestQueue = Volley.newRequestQueue(this);
         StringRequest stringRequest = new StringRequest(Request.Method.GET, Configuration.baseURLSurat,
                 new Response.Listener<String>() {
@@ -363,26 +379,10 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
             @Override
             public void onErrorResponse(VolleyError error) {
                 PgDialog.hide(progressDialog);
-                errorVolley(error);
+                Common.volleyErrorHandle(MainActivity.this, error);
             }
         });
         requestQueue.add(stringRequest);
-    }
-
-    private void errorVolley(VolleyError error){
-        if (error instanceof NetworkError){
-            Toast.makeText(MainActivity.this, Configuration.VOLLEY_ERROR_CONNECTION, Toast.LENGTH_SHORT).show();
-        }else if(error instanceof ServerError){
-            Toast.makeText(MainActivity.this, Configuration.VOLLEY_SERVER_ERROR, Toast.LENGTH_SHORT).show();
-        }else if(error instanceof AuthFailureError){
-            Toast.makeText(MainActivity.this, Configuration.VOLLEY_AUTH_ERROR, Toast.LENGTH_SHORT).show();
-        }else if(error instanceof ParseError){
-            Toast.makeText(MainActivity.this, Configuration.VOLLEY_PARSE_ERROR, Toast.LENGTH_SHORT).show();
-        }else if(error instanceof NoConnectionError){
-            Toast.makeText(MainActivity.this, Configuration.VOLLEY_NO_INTERNET, Toast.LENGTH_SHORT).show();
-        }else if (error instanceof TimeoutError){
-            Toast.makeText(MainActivity.this, Configuration.VOLLEY_TIME_OUT, Toast.LENGTH_SHORT).show();
-        }
     }
 
     private void shareApps(){
@@ -409,6 +409,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                 public boolean onMenuItemClick(MenuItem item) {
                     switch (item.getItemId()) {
                         case R.id.muatUlang:
+                            isGetSuratLoaded = true;
                             getJadwal();
                             getSurat();
                             break;
@@ -452,7 +453,8 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                 startActivity(intentMap);
                 break;
             case R.id.menu3:
-                Toast.makeText(this, "Beri rating apps", Toast.LENGTH_SHORT).show();
+                Intent intentRating = new Intent(Intent.ACTION_VIEW, Uri.parse("https://google.com"));
+                startActivity(intentRating);
                 break;
             case R.id.menu4:
                 Intent intentWeb = new Intent(MainActivity.this, WebViewActivity.class);
@@ -461,10 +463,28 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
             case R.id.menu5:
                 Intent intentDonasi = new Intent(MainActivity.this, DonasiActivity.class);
                 startActivity(intentDonasi);
+                break;
+            case R.id.menu6:
+                Intent intentCovid = new Intent(MainActivity.this, CovidActivity.class);
+                startActivity(intentCovid);
+                break;
+            case R.id.menu7:
+                alertVersion();
+                break;
         }
         DrawerLayout drawer = findViewById(R.id.drawer_layout);
         drawer.closeDrawer(Gravity.LEFT);
         return true;
+    }
+
+    private void alertVersion(){
+        new AlertDialog.Builder(this)
+                .setIcon(R.drawable.ic_help)
+                .setTitle("Versi Aplikasi")
+                .setMessage("Alquran v0.1")
+                .setCancelable(true)
+                .setPositiveButton("OK", null)
+                .show();
     }
 
     // Handle location sholat jadwal
@@ -479,7 +499,10 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
             txtLocation.setText(kota);
 
             cityEndpoint = kota.replaceAll("\\s+", "").toLowerCase();
-//            getJadwal();
+            if (isGetJadwalLoaded){
+                getJadwal();
+            }
+            isGetJadwalLoaded = false;
         } catch (IOException e) {
             e.printStackTrace();
         }

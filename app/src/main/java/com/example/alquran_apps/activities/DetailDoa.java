@@ -27,6 +27,7 @@ import com.android.volley.toolbox.StringRequest;
 import com.android.volley.toolbox.Volley;
 import com.bumptech.glide.Glide;
 import com.example.alquran_apps.R;
+import com.example.alquran_apps.util.Common;
 import com.example.alquran_apps.util.Configuration;
 import com.example.alquran_apps.util.PgDialog;
 
@@ -86,7 +87,9 @@ public class DetailDoa extends AppCompatActivity {
                     JSONObject jsonObject = new JSONObject(response);
                     JSONObject data = jsonObject.getJSONObject("result");
                     txtDoa.setText(data.getString("text_ar"));
-                    txtTranslation.setText(data.getString("translation"));
+
+                    Spanned translationSpanned = Html.fromHtml(data.getString("translation"));
+                    txtTranslation.setText(translationSpanned);
                     txtTitleBar.setText(data.getString("judul"));
                     Glide.with(DetailDoa.this).load(data.getString("img")).into(imgDoa);
 
@@ -102,19 +105,7 @@ public class DetailDoa extends AppCompatActivity {
             @Override
             public void onErrorResponse(VolleyError error) {
                 PgDialog.hide(progressDialog);
-                if (error instanceof NetworkError){
-                    Toast.makeText(DetailDoa.this, Configuration.VOLLEY_ERROR_CONNECTION, Toast.LENGTH_SHORT).show();
-                }else if(error instanceof ServerError){
-                    Toast.makeText(DetailDoa.this, Configuration.VOLLEY_SERVER_ERROR, Toast.LENGTH_SHORT).show();
-                }else if(error instanceof AuthFailureError){
-                    Toast.makeText(DetailDoa.this, Configuration.VOLLEY_AUTH_ERROR, Toast.LENGTH_SHORT).show();
-                }else if(error instanceof ParseError){
-                    Toast.makeText(DetailDoa.this, Configuration.VOLLEY_PARSE_ERROR, Toast.LENGTH_SHORT).show();
-                }else if(error instanceof NoConnectionError){
-                    Toast.makeText(DetailDoa.this, Configuration.VOLLEY_NO_INTERNET, Toast.LENGTH_SHORT).show();
-                }else if (error instanceof TimeoutError){
-                    Toast.makeText(DetailDoa.this, Configuration.VOLLEY_TIME_OUT, Toast.LENGTH_SHORT).show();
-                }
+                Common.volleyErrorHandle(DetailDoa.this, error);
             }
         });
         requestQueue.add(stringRequest);

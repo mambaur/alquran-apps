@@ -1,8 +1,18 @@
 <?xml version="1.0" encoding="utf-8"?>
 <menu xmlns:android="http://schemas.android.com/apk/res/android">
-    <item android:id="@+id/menu1" android:icon="@drawable/ic_my_location" android:title="Kompas Kiblat"/>
-    <item android:id="@+id/menu2" android:icon="@drawable/ic_place" android:title="Masjid Terdekat" />
-    <item android:id="@+id/menu3" android:icon="@drawable/ic_star" android:title="Beri rating app" />
-    <item android:id="@+id/menu5" android:icon="@drawable/ic_favorite_border_black" android:title="Donasi untuk apk" />
-    <item android:id="@+id/menu4" android:icon="@drawable/ic_help" android:title="Tentang" />
+    <group android:id="@+id/groupMain">
+        <item android:id="@+id/menu1" android:icon="@drawable/ic_my_location" android:title="Kompas Kiblat"/>
+        <item android:id="@+id/menu2" android:icon="@drawable/ic_place" android:title="Masjid Terdekat" />
+        <item android:id="@+id/menu6" android:icon="@drawable/ic_public_black_24dp" android:title="Informasi Covid-19"/>
+    </group>
+
+    <group android:id="@+id/supportApp">
+        <item android:id="@+id/menu3" android:icon="@drawable/ic_star" android:title="Beri Rating App" />
+        <item android:id="@+id/menu5" android:icon="@drawable/ic_favorite_border_black" android:title="Donasi Untuk App" />
+    </group>
+
+    <group android:id="@+id/groupHelp">
+        <item android:id="@+id/menu4" android:icon="@drawable/ic_verified_user_black_24dp" android:title="Kebijakan Privasi" />
+        <item android:id="@+id/menu7" android:icon="@drawable/ic_help" android:title="Versi Aplikasi" />
+    </group>
 </menu>

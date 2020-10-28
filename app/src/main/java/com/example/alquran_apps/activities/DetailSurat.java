@@ -2,6 +2,7 @@ package com.example.alquran_apps.activities;
 
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.constraintlayout.widget.ConstraintLayout;
+import androidx.core.widget.NestedScrollView;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
@@ -16,6 +17,7 @@ import android.view.View;
 import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
+import android.widget.ProgressBar;
 import android.widget.SeekBar;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -35,6 +37,7 @@ import com.android.volley.toolbox.Volley;
 import com.example.alquran_apps.R;
 import com.example.alquran_apps.adapters.DetailSuratAdapter;
 import com.example.alquran_apps.models.AyatModel;
+import com.example.alquran_apps.util.Common;
 import com.example.alquran_apps.util.Configuration;
 import com.example.alquran_apps.util.PgDialog;
 
@@ -48,11 +51,15 @@ import java.util.List;
 public class DetailSurat extends AppCompatActivity implements View.OnClickListener {
     private RecyclerView recyclerView;
     private RecyclerView.Adapter adapter;
-    private RecyclerView.LayoutManager layoutManager;
+    private LinearLayoutManager layoutManager;
     private AyatModel ayatModel;
     private List<AyatModel> listDetail;
     private String nomorSurat, audioSurat;
     private String namaSurat = "";
+    private Boolean isScrolling = true;
+    private int currentItems, totalItems, scrollOutItems;
+    private int totalData = 20;
+    private int loadData = 0;
 
     // Interface
     private ImageButton btnPlay, btnPlayLayout;
@@ -62,9 +69,10 @@ public class DetailSurat extends AppCompatActivity implements View.OnClickListen
     private SeekBar seekBar;
     private TextView txtAudioStart, txtAudioEnd;
     private LinearLayout btnTafsir;
+    private NestedScrollView nestedScrollView;
 
-    MediaPlayer mediaPlayer;
-    Handler handler = new Handler();
+    private MediaPlayer mediaPlayer;
+    private Handler handler = new Handler();
     private ProgressDialog progressDialog;
 
     @SuppressLint("ClickableViewAccessibility")
@@ -87,8 +95,10 @@ public class DetailSurat extends AppCompatActivity implements View.OnClickListen
         btnClose = findViewById(R.id.btnClose);
         seekBar = findViewById(R.id.seekbar);
         btnTafsir = findViewById(R.id.btnTafsir);
+        nestedScrollView = findViewById(R.id.nestedScroll);
 
         progressDialog = new ProgressDialog(this);
+        listDetail = new ArrayList<>();
 
         // Audio player
         mediaPlayer = new MediaPlayer();
@@ -101,6 +111,8 @@ public class DetailSurat extends AppCompatActivity implements View.OnClickListen
         btnTafsir.setOnClickListener(this);
 
         nomorSurat = getIntent().getStringExtra(Configuration.NOMOR_SURAT);
+
+        getDetail();
 
         seekBar.setOnTouchListener(new View.OnTouchListener() {
             @Override
@@ -130,6 +142,25 @@ public class DetailSurat extends AppCompatActivity implements View.OnClickListen
                 txtAudioEnd.setText("00:00");
                 mediaPlayer.reset();
                 prepareMediaPlayer();
+            }
+        });
+
+        nestedScrollView.setOnScrollChangeListener(new NestedScrollView.OnScrollChangeListener() {
+            @Override
+            public void onScrollChange(NestedScrollView v, int scrollX, int scrollY, int oldScrollX, int oldScrollY) {
+                if (v.getChildAt(v.getChildCount() - 1) != null) {
+                    if ((scrollY >= (v.getChildAt(v.getChildCount() - 1).getMeasuredHeight() - v.getMeasuredHeight()))
+                            && scrollY > oldScrollY) {
+                        currentItems = layoutManager.getChildCount();
+                        totalItems = layoutManager.getItemCount();
+                        scrollOutItems = layoutManager.findFirstVisibleItemPosition();
+                        if (isScrolling && (currentItems + scrollOutItems) >= totalItems) {
+                            isScrolling = false;
+                            getDetail();
+                            isScrolling = true;
+                        }
+                    }
+                }
             }
         });
     }
@@ -193,49 +224,51 @@ public class DetailSurat extends AppCompatActivity implements View.OnClickListen
         finish();
     }
 
-    @Override
-    protected void onResume() {
-        super.onResume();
-        getDetail();
-    }
-
     void getDetail(){
         PgDialog.show(progressDialog);
         RequestQueue requestQueue = Volley.newRequestQueue(this);
         StringRequest stringRequest = new StringRequest(Request.Method.GET, Configuration.baseURLDetailSurat+nomorSurat+".json", new Response.Listener<String>() {
             @Override
             public void onResponse(String response) {
-                listDetail = new ArrayList<>();
                 try {
                     JSONObject jsonObject = new JSONObject(response);
                     JSONArray jsonArray = jsonObject.getJSONArray("verses");
-                    for (int i=0; i<jsonArray.length(); i++){
-                        JSONObject value = jsonArray.getJSONObject(i);
-                        ayatModel = new AyatModel();
-                        ayatModel.setText(value.getString("text"));
-                        ayatModel.setTranslation_id(value.getString("translation_id"));
-                        ayatModel.setNumber(value.getInt("number"));
-                        listDetail.add(ayatModel);
+                    totalData = jsonArray.length();
+                    if (jsonArray.length() >= listDetail.size()){
+                        for (int i=loadData; i<loadData+15; i++){
+                            JSONObject value = jsonArray.getJSONObject(i);
+                            ayatModel = new AyatModel();
+                            ayatModel.setText(value.getString("text"));
+                            ayatModel.setTranslation_id(value.getString("translation_id"));
+                            ayatModel.setNumber(value.getInt("number"));
+                            listDetail.add(ayatModel);
+                            System.out.println("ini adalah json array "+jsonArray.length());
+                            if (jsonArray.length() <= listDetail.size()){
+                                break;
+                            }
+                        }
+
+                        loadData = listDetail.size();
+
+                        JSONArray recitations = jsonObject.getJSONArray("recitations");
+
+                        txtNama.setText(jsonObject.getString("name"));
+                        txtTurun.setText(jsonObject.getString("type"));
+                        txtAsma.setText(jsonObject.getJSONObject("name_translations").getString("ar"));
+
+                        audioSurat = recitations.getJSONObject(0).getString("audio_url");
+                        namaSurat = jsonObject.getString("name");
+
+                        // RecyclerView Detail Surat
+                        layoutManager = new LinearLayoutManager(DetailSurat.this, LinearLayoutManager.VERTICAL, false);
+                        recyclerView.setLayoutManager(layoutManager);
+
+                        adapter = new DetailSuratAdapter(DetailSurat.this, listDetail);
+                        recyclerView.setAdapter(adapter);
+                        adapter.notifyDataSetChanged();
+
+                        PgDialog.hide(progressDialog);
                     }
-
-                    JSONArray recitations = jsonObject.getJSONArray("recitations");
-
-                    txtNama.setText(jsonObject.getString("name"));
-                    txtTurun.setText(jsonObject.getString("type"));
-                    txtAsma.setText(jsonObject.getJSONObject("name_translations").getString("ar"));
-
-                    audioSurat = recitations.getJSONObject(0).getString("audio_url");
-                    namaSurat = jsonObject.getString("name");
-
-                    // RecyclerView Detail Surat
-                    layoutManager = new LinearLayoutManager(DetailSurat.this, LinearLayoutManager.VERTICAL, false);
-                    recyclerView.setLayoutManager(layoutManager);
-
-                    adapter = new DetailSuratAdapter(DetailSurat.this, listDetail);
-                    recyclerView.setAdapter(adapter);
-                    adapter.notifyDataSetChanged();
-
-                    PgDialog.hide(progressDialog);
                 } catch (JSONException e) {
                     PgDialog.hide(progressDialog);
                     e.printStackTrace();
@@ -245,19 +278,7 @@ public class DetailSurat extends AppCompatActivity implements View.OnClickListen
             @Override
             public void onErrorResponse(VolleyError error) {
                 PgDialog.hide(progressDialog);
-                if (error instanceof NetworkError){
-                    Toast.makeText(DetailSurat.this, Configuration.VOLLEY_ERROR_CONNECTION, Toast.LENGTH_SHORT).show();
-                }else if(error instanceof ServerError){
-                    Toast.makeText(DetailSurat.this, Configuration.VOLLEY_SERVER_ERROR, Toast.LENGTH_SHORT).show();
-                }else if(error instanceof AuthFailureError){
-                    Toast.makeText(DetailSurat.this, Configuration.VOLLEY_AUTH_ERROR, Toast.LENGTH_SHORT).show();
-                }else if(error instanceof ParseError){
-                    Toast.makeText(DetailSurat.this, Configuration.VOLLEY_PARSE_ERROR, Toast.LENGTH_SHORT).show();
-                }else if(error instanceof NoConnectionError){
-                    Toast.makeText(DetailSurat.this, Configuration.VOLLEY_NO_INTERNET, Toast.LENGTH_SHORT).show();
-                }else if (error instanceof TimeoutError){
-                    Toast.makeText(DetailSurat.this, Configuration.VOLLEY_TIME_OUT, Toast.LENGTH_SHORT).show();
-                }
+                Common.volleyErrorHandle(DetailSurat.this, error);
             }
         });
         requestQueue.add(stringRequest);

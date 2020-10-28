@@ -26,6 +26,7 @@ import com.android.volley.toolbox.Volley;
 import com.example.alquran_apps.R;
 import com.example.alquran_apps.adapters.ListDoaAdapter;
 import com.example.alquran_apps.models.DoaModel;
+import com.example.alquran_apps.util.Common;
 import com.example.alquran_apps.util.Configuration;
 import com.example.alquran_apps.util.PgDialog;
 
@@ -105,19 +106,7 @@ public class DoaActivity extends AppCompatActivity {
             @Override
             public void onErrorResponse(VolleyError error) {
                 PgDialog.hide(progressDialog);
-                if (error instanceof NetworkError){
-                    Toast.makeText(DoaActivity.this, Configuration.VOLLEY_ERROR_CONNECTION, Toast.LENGTH_SHORT).show();
-                }else if(error instanceof ServerError){
-                    Toast.makeText(DoaActivity.this, Configuration.VOLLEY_SERVER_ERROR, Toast.LENGTH_SHORT).show();
-                }else if(error instanceof AuthFailureError){
-                    Toast.makeText(DoaActivity.this, Configuration.VOLLEY_AUTH_ERROR, Toast.LENGTH_SHORT).show();
-                }else if(error instanceof ParseError){
-                    Toast.makeText(DoaActivity.this, Configuration.VOLLEY_PARSE_ERROR, Toast.LENGTH_SHORT).show();
-                }else if(error instanceof NoConnectionError){
-                    Toast.makeText(DoaActivity.this, Configuration.VOLLEY_NO_INTERNET, Toast.LENGTH_SHORT).show();
-                }else if (error instanceof TimeoutError){
-                    Toast.makeText(DoaActivity.this, Configuration.VOLLEY_TIME_OUT, Toast.LENGTH_SHORT).show();
-                }
+                Common.volleyErrorHandle(DoaActivity.this, error);
             }
         });
         requestQueue.add(jsonObjectRequest);
