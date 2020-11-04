@@ -8,6 +8,7 @@
     <color name="colorLight">#f7f7f7</color>
     <color name="colorWhite">#FFFFFF</color>
     <color name="colorDanger">#d92b2c</color>
+    <color name="colorGreyTransparent">#4D535353</color>
 
 <!--    Main Color-->
     <color name="colorGreen5">#2eb62c</color>

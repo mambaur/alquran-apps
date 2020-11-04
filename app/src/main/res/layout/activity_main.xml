@@ -68,7 +68,7 @@
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
                             android:fontFamily="@font/roboto"
-                            android:text="Alquran"
+                            android:text="Al Quran"
                             android:textColor="@color/colorWhite"
                             android:textSize="30dp"
                             android:textStyle="bold" />
@@ -78,7 +78,7 @@
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
                             android:fontFamily="@font/roboto"
-                            android:text="Yuk baca Alquran!"
+                            android:text="Yuk baca Al Quran!"
                             android:textColor="@color/colorWhite"
                             android:textSize="15dp"
                             android:textStyle="bold" />
@@ -348,7 +348,14 @@
                 </androidx.constraintlayout.widget.ConstraintLayout>
             </LinearLayout>
         </androidx.core.widget.NestedScrollView>
+
     </androidx.coordinatorlayout.widget.CoordinatorLayout>
+
+    <FrameLayout
+        android:id="@+id/popUp"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:animateLayoutChanges="true"/>
 
     <com.google.android.material.navigation.NavigationView
         android:id="@+id/nav_view"

@@ -31,7 +31,7 @@
             android:textStyle="bold"
             android:textSize="20dp"
             android:textColor="@color/colorDark"
-            android:text="Alqur-an Apps" />
+            android:text="Al Qur-an Apps" />
 
         <TextView
             android:layout_width="wrap_content"
